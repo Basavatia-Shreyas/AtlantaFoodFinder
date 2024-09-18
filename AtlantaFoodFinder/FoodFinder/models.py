@@ -6,4 +6,4 @@ class User(models.Model):
     password = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     # Figure out how to store the resturant - list of char, resturaunt objects, etc?
-    #favorites = models
+    #favorites = models 

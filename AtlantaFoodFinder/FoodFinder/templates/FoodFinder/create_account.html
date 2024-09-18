@@ -1,3 +1,21 @@
-<ul>
-    <li>This is the create account page</li>
-</ul>
+<form method="POST" action="">
+    {% csrf_token %}
+
+    {{form.username.label}}
+    {{form.username}}
+
+    {{form.email.label}}
+    {{form.email}}
+
+    {{form.password1.label}}
+    {{form.password1}}
+
+    {{form.password2.label}}
+    {{form.password2}}
+
+    <input type="submit" name="Create User"/>
+</form>
+
+<div>
+    Already have an account? <a href="{% url 'login' %}">Login</a>
+</div>
