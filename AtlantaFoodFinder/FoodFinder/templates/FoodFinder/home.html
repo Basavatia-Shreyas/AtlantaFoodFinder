@@ -1,6 +1,26 @@
-<ul>
-    <li>This is the home page</li>
-    <li>Hello {{request.user}}</li>
-</ul>
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    {% csrf_token %}
+    <ul>
+        <li>This is the home page</li>
+        <li>Hello {{request.user}}</li>
+    </ul>
+    
+    <a href="{% url 'logout' %}">
+        Logout
+    </a>
+    
+    <p>
+        {{ result }}
+    </p>
 
-<a href="{% url 'logout' %}">Logout</a>
+    
+</body>
+
+</html>
