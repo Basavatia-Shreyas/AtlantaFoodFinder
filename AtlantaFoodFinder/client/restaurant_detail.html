@@ -1,0 +1,11 @@
+<div class="restaurant-detail">
+    <h1>{{ restaurant.name }}</h1>
+    <p>{{ restaurant.address }}</p>
+    <p>{{ restaurant.description }}</p>
+    {% if restaurant.image_url %}
+        <img src="{{ restaurant.image_url }}" alt="{{ restaurant.name }}">
+    {% endif %}
+    <p>Opening Hours: {{ restaurant.opening_hours }}</p>
+    <p>Phone: {{ restaurant.phone_number }}</p>
+    <a href="{{ restaurant.website }}">Visit Website</a>
+</div>
