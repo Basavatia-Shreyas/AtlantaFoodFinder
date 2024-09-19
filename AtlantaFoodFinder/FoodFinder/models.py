@@ -1,4 +1,4 @@
-from django.db import modelsR
+from django.db import models
 
 # Create your models here.
 class Restaurant(models.Model):
