@@ -1,9 +1,3 @@
-<div>
-    Already have an account? <a href="{% url 'login' %}">Login</a>
-</div>
-
-
-
 <!doctype html>
 <html>
 <head>
@@ -42,16 +36,15 @@
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
 
-    <form method="POST" class="space-y-6" action="" method="POST">
+    <form class="space-y-6" action="" method="POST">
        {% csrf_token %}
        <div>
         <div class="flex items-center justify-between">
           <label for="password" class="block text-sm font-medium text-green-800 leading-6 ">Name</label>
         </div>
         <div class="mt-2">
-            <div id="Name" name="Name" type="Name" autocomplete="current-name" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green800 sm:text-sm sm:leading-6">
-
-                {{form.username}}
+          <div id="Name" name="Name" type="Name" autocomplete="current-name" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green800 sm:text-sm sm:leading-6">
+              {{form.username}}
             </div>
           
         </div>
@@ -61,8 +54,9 @@
         <div>
         <label for="email" class="block text-sm font-medium text-green-800 leading-6">Email address</label>
         <div class="mt-2">
-          {{form.email}}
-          <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <div required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                {{form.email}}
+            </div>
         </div>
       </div>
 
@@ -72,30 +66,59 @@
           <label for="password" class="block text-sm font-medium text-green-800 leading-6 ">Password</label>
         </div>
         <div class="mt-2">
+          <div required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
             {{form.password1}}
-          <input id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green800 sm:text-sm sm:leading-6">
+          </div>
         </div>
       </div>
       
-      <div></div>
+      <div>
         <div class="flex items-center justify-between">
           <label for="password" class="block text-sm font-medium text-green-800 leading-6 ">Password</label>
         </div>
         <div class="mt-2">
+          <div required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
             {{form.password2}}
-          <input id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green800 sm:text-sm sm:leading-6">
+          </div>
         </div>
       </div>
 
       <div>
-        <input type="submit" class="flex w-full justify-center rounded-md bg-green-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" name="Create User">Create Account</input>
+        <div class="flex items-center justify-between">
+          <label for="Favorite Cuisine" class="block text-sm font-medium text-green-800 leading-6 ">Favorite Cuisine</label>
+        </div>
+        <div class="mt-2">
+            <select id="cuisine" name="cuisine" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green800 sm:text-sm sm:leading-6">
+                <option value="italian">Italian</option>
+                <option value="chinese">Chinese</option>
+                <option value="thai">Thai</option>
+                <option value="indian">Indian</option>
+                <option value="mexican">Mexican</option>
+                <option value="american">American</option>
+                <option value="greek">Greek</option>
+                <option value="korean">Korean</option>
+                <option value="japanese">Japanese</option>
+                <option value="vietnamese">Vietnamese</option>
+            </select>
+        </div>
+      </div>
+
+      {% for message in messages %}
+        <p id="messages">{{message}}</p>
+      {% endfor %}
+
+      <div>
+        <input type="submit" class="flex w-full justify-center rounded-md bg-green-800 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" name="Create User">
       </div>
     </form>
 
+    <p class="mt-10 text-center text-sm text-gray-500"></p>
+      Already a member?
+      <a href="{% url 'login' %}" class="font-semibold leading-6 text-green-800 hover:text-indigo-500">Login</a>
+    </p>
+
   </div>
 </div>
-
-
 
 
 <footer class="bg-gray-100 p-6 text-center">

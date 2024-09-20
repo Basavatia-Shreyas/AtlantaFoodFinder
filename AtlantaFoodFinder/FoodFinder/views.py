@@ -1,3 +1,4 @@
+# const position = { lat: parseFloat('{{ current_location.location.lat }}'), lng: parseFloat('{{ current_loc.location.lng }}') };
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -23,20 +24,28 @@ from .templates.forms import CreateUserForm
 # Create your views here.
 @csrf_protect
 def index(request):
-    find_place = map_client.find_place("Blue India", 'textquery')
-    place_id = find_place["candidates"][0]["place_id"]
-    response = map_client.place(place_id)
+    try:
+        current_loc = map_client.geolocate(consider_ip=True)
+        response = map_client.places_nearby(location=current_loc['location'], radius=500, type="restaurant")
+    except:
+        current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
+        response = {"Error" : "Couldn't load nearby restaurants"}
+    for index, restaurant in enumerate(response['results']):
+        try:
+            photo_reference = restaurant["photos"][0]["photo_reference"]
+            link = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}"
+            response['results'][index]["photo_link"] = link
+            response['results'][index].pop("photos", None)
+        except:
+            pass
 
     if response["status"] == "OK":
         print('Successful search!')
-        print(response)  # Print the JSON response from the API
-        context = response
-        #return JsonResponse({'status': 'success', 'data': response})
+        print(current_loc)
+        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
     else:
         print(f"Error: {response['status']}")
-        print(response)
         context = response
-        #return JsonResponse({'status': 'error', 'message': response}, status=response['status'])
 
     return render(request, "FoodFinder/home.html", context=context)
 
@@ -71,9 +80,14 @@ def create_account(request):
 
         if request.method == "POST":
             form = CreateUserForm(request.POST)
+
+            favoriteCuisine = request.POST.get("cuisine")
+            print(favoriteCuisine)
             if form.is_valid():
                 form.save()
-                return redirect("login")
+                return redirect("index")
+            else:
+                messages.info(request, "Please enter valid values for all the fields")
 
         context = {"form" : form}
         return render(request, "FoodFinder/create_account.html", context)
