@@ -15,6 +15,9 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+
+from urllib.parse import urlencode
 
 import googlemaps
 map_client = googlemaps.Client(api_key)
@@ -40,12 +43,19 @@ def index(request):
             pass
 
     if response["status"] == "OK":
-        print('Successful search!')
+        #print('Successful search!')
         print(current_loc)
         context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
     else:
         print(f"Error: {response['status']}")
         context = response
+
+    if request.method == "POST":
+        base_url = reverse('restaurant')
+        place_id = request.POST.get("place")
+        query_string =  urlencode({'place': place_id})
+        url = '{}?{}'.format(base_url, query_string)
+        return redirect(url)
 
     return render(request, "FoodFinder/home.html", context=context)
 
@@ -92,8 +102,18 @@ def create_account(request):
         context = {"form" : form}
         return render(request, "FoodFinder/create_account.html", context)
 
+@csrf_protect
 def restaurant(request):
-    return render(request, "FoodFinder/restaurant.html")
+    place_id = request.GET.get('place')
+    response = map_client.place(place_id)
+
+    if response["status"] == "OK":
+        print('Successful search!')
+        context = {"response": response}
+    else:
+        print(f"Error: {response['status']}")
+        context = response
+    return render(request, "FoodFinder/restaurant.html", context=context)
 
 @login_required(login_url="login")
 def favorites(request):

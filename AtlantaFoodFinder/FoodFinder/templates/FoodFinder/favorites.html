@@ -17,24 +17,7 @@
   </script>
 </head>
 <body class="">
-<nav class="flex justify-between items-center p-6 bg-gray-100">
-  <h1 class="text-5xl font-serif text-green-800" style="font-family: 'Playfair Display', serif; font-weight: 700;">
-    My Favorites
-  </h1>
-  <ul class="flex space-x-6">
-    <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">My Profile</a></li>
-    <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">Favorites</a></li>
-    <li>
-      <a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Sign In</a>
-    </li>
-    <li>
-      <a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Register</a>
-    </li>
-  </ul>
-</nav>
-
-
-
+{% include 'FoodFinder/navbar.html' %}
 
 <div class="flex justify-between items-start p-6"> <!-- Flex container for the grid and image -->
   <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
@@ -170,8 +153,6 @@
   </div>
 
 
-<footer class="bg-gray-100 p-6 text-center">
-  <p class="text-gray-700">&copy; 2024 Atlanta Food Finder. All rights reserved.</p>
-</footer>
+  {% include 'FoodFinder/footer.html' %}
 </body>
 </html>

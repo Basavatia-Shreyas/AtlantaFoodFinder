@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
 <head>
@@ -25,24 +26,8 @@
 </head>
 <body class="">
 {% csrf_token %}
-<nav class="flex justify-between items-center p-6 bg-gray-100">
-  <h1 class="text-5xl font-serif text-green-800" style="font-family: 'Playfair Display', serif; font-weight: 700;">
-    Atlanta Food Finder
-  </h1>
-  <ul class="flex space-x-6">
-    <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">My Profile</a></li>
-    <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">Favorites</a></li>
-    {% if user.is_authenticated %}
-      <li>
-        <a href="{% url 'logout' %}" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Logout</a>
-      </li>
-    {% else %}
-    <li>
-      <a href="{% url 'login' %}" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Login</a>
-    </li>
-    {% endif %}
-  </ul>
-</nav>
+{% include 'FoodFinder/navbar.html' %}
+
 <form class="px-6 py-3 max-w-sm">
     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
     <div class="relative">
@@ -75,9 +60,11 @@
                 <p class='text-[17px] font-bold text-[#0FB478]'>{{restaurant.vicinity}}</p>
               </div>
               <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant: {{restaurant.rating}}, {{restaurant.price_level}}</p>
-              <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                  Do Something
-              </a>
+              <form method="POST" action="#">
+                {% csrf_token %}
+                <input type="hidden" name="place" value="{{ restaurant.place_id }}">
+                <button type="submit" class="block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80">More Info</button>
+              </form>
               <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
                   Visit Website
               </a>
@@ -133,6 +120,4 @@
   </div>
 </div>
 
-<footer class="bg-gray-100 p-6 text-center">
-  <p class="text-gray-700">&copy; 2024 Atlanta Food Finder. All rights reserved.</p>
-</footer>
+{% include 'FoodFinder/footer.html' %}
