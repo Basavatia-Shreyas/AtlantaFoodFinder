@@ -43,8 +43,9 @@
     {% endif %}
   </ul>
 </nav>
-<form class="px-6 py-3 max-w-sm">
+<form action = "" class="px-6 py-3 max-w-sm">
     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+    {% csrf_token %}
     <div class="relative">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -56,15 +57,13 @@
     </div>
 </form>
 
+
 <p class='font-bold text-gray-700 text-green-800 text-[18px]' style='padding-left: 22px;'>Hello {{request.user}}</p>
 <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Restaurants close to {{ current_location }}</p>
 
-
-
 <div class="flex justify-between items-start p-6"> <!-- Flex container for the grid and image -->
   <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
-    
-    {% for restaurant in response %}
+      {% for restaurant in response %}
       <div class='flex items-center bg-white'>
         <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
           <div class='max-w-xs mx-auto'>
@@ -85,9 +84,9 @@
           </div>
         </div>
       </div>
-    {% endfor %}
-        
+          {% endfor %}
   </div>
+
   
 
   <div class="w-1/2 px-6">
