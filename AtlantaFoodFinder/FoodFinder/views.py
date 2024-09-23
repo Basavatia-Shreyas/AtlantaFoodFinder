@@ -107,9 +107,11 @@ def restaurant(request):
     place_id = request.GET.get('place')
     response = map_client.place(place_id)
 
+    current_loc = map_client.geolocate(consider_ip=True)
+
     if response["status"] == "OK":
         print('Successful search!')
-        context = {"response": response}
+        context = {"response": response, "current_location": current_loc, "google_maps_api_key": api_key}
     else:
         print(f"Error: {response['status']}")
         context = response

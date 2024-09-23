@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // input custom colors here
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" defer></script>
+    <style>
+        #map {
+            height: 80vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+    {{ response|json_script:"myData" }}
+    <script data-response="{{ response }}">
+      // Initialize and add the map
+      function initMap() {
+          const data = JSON.parse(document.getElementById('myData').textContent);
+          console.log(data);
+          console.log(typeof data);
+          // The location of user
+          const position = { lat: parseFloat("{{ current_location.location.lat }}"), lng: parseFloat("{{ current_location.location.lng }}") };
+  
+          // The map, centered at position
+          const map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 14,
+              center: position,
+          });
+  
+          // const customMarker = document.createElement("div");
+          // customMarker.className = "custom-marker";
+          // customMarker.innerHTML = "A";
+          // const advancedMarker = new google.maps.marker.AdvancedMarkerElement({
+          //     map: map,
+          //     position: { lat: 37.7749, lng: -122.4194 }, // Marker position
+          //     content: customMarker, // Custom HTML marker
+          //     collisionBehavior: google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+          // });
+  
+          for (let restaurant of data) {
+              const pos = { lat: restaurant.geometry.location.lat, lng: restaurant.geometry.location.lng};
+              // Add the markers
+              new google.maps.Marker({
+                  map: map,
+                  position: pos,
+                  title: restaurant.title,
+              });
+          }
+      }
+      initMap();
+    </script>
+</body>
+</html>
