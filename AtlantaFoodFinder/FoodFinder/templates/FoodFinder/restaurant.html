@@ -2,7 +2,16 @@
 {{ response.result.name }}
 <a href="{{ response.result.website }}">Website</a>
 
-{% include 'FoodFinder/map_restaurant.html' %}
+
+<div class="grid grid-cols-2 gap-10 w-3/4">
+    <div>
+        Empty
+    </div>
+    <div class="w-1/2 px-6"></div>
+        {% include 'FoodFinder/map_restaurant.html' %}
+    </div>
+</div>
+
 
 <ul>
     <li>Restaurant page</li>
