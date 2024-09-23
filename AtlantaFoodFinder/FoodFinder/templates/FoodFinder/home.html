@@ -32,12 +32,15 @@
   <ul class="flex space-x-6">
     <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">My Profile</a></li>
     <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">Favorites</a></li>
+    {% if user.is_authenticated %}
+      <li>
+        <a href="{% url 'logout' %}" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Logout</a>
+      </li>
+    {% else %}
     <li>
-      <a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Sign In</a>
+      <a href="{% url 'login' %}" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Login</a>
     </li>
-    <li>
-      <a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Register</a>
-    </li>
+    {% endif %}
   </ul>
 </nav>
 <form class="px-6 py-3 max-w-sm">
