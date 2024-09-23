@@ -20,6 +20,7 @@ import googlemaps
 map_client = googlemaps.Client(api_key)
 
 from .templates.forms import CreateUserForm
+import requests
 
 # Create your views here.
 @csrf_protect
@@ -98,3 +99,4 @@ def restaurant(request):
 @login_required(login_url="login")
 def favorites(request):
     return render(request, "FoodFinder/favorites.html")
+
