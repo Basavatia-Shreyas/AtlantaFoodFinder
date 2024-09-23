@@ -16,7 +16,7 @@ class Profile(models.Model):
         Japanese = "Japanese"
         Vietnamese = "Vietnamese"
 
-    favoriateCuisine = models.CharField(
+    favoriteCuisine = models.CharField(
         choices=Cuisine.choices,
         default=Cuisine.American,
         max_length=15,
