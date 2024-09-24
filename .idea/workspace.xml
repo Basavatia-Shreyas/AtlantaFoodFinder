@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="no more sign in and register buttons on favorites page">
-      <change afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/management/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/management/commands/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/management/commands/fetch_restaurants.py" afterDir="false" />
+    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="restart">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/favorites.html" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/favorites.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,24 +56,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Django Server.AtlantaFoodFinder.executor": "Run",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "ToolWindow.Database.ShowToolbar": "false",
-    "django.template.preview.state": "SHOW_EDITOR",
-    "git-widget-placeholder": "mihibackend",
-    "last_opened_file_path": "/Users/Mihika/CS2340/AtlantaFoodFinder/AtlantaFoodFinder/FoodFinder/templates/FoodFinder",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Django Server.AtlantaFoodFinder.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ToolWindow.Database.ShowToolbar&quot;: &quot;false&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;mihibackend&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/Mihika/CS2340/AtlantaFoodFinder/AtlantaFoodFinder/FoodFinder/templates/FoodFinder&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder" />
@@ -130,6 +127,7 @@
       <updated>1727105524418</updated>
       <workItem from="1727105525843" duration="855000" />
       <workItem from="1727106392693" duration="2888000" />
+      <workItem from="1727201147112" duration="4134000" />
     </task>
     <task id="LOCAL-00001" summary="search button">
       <option name="closed" value="true" />
@@ -147,7 +145,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727112168906</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="restart">
+      <option name="closed" value="true" />
+      <created>1727129549365</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1727129549365</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +163,7 @@
     <MESSAGE value="test" />
     <MESSAGE value="search button" />
     <MESSAGE value="no more sign in and register buttons on favorites page" />
-    <option name="LAST_COMMIT_MESSAGE" value="no more sign in and register buttons on favorites page" />
+    <MESSAGE value="restart" />
+    <option name="LAST_COMMIT_MESSAGE" value="restart" />
   </component>
 </project>

@@ -15,6 +15,13 @@
       }
     }
   </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" defer></script>
+    <style>
+        #map {
+            height: 80vh;
+            width: 100%;
+        }
+    </style>
 </head>
 <body class="">
 <nav class="flex justify-between items-center p-6 bg-gray-100">
@@ -30,141 +37,213 @@
   </ul>
 </nav>
 
-
-
+<p class='font-bold text-gray-700 text-green-800 text-[18px]' style='padding-left: 22px;'>Hello {{request.user}}</p>
 
 <div class="flex justify-between items-start p-6"> <!-- Flex container for the grid and image -->
-  <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
-    <!-- This is an example component -->
-    <div class='flex items-center bg-white'>
-      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
-        <div class='max-w-xs mx-auto'>
-          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>
-          <div class='p-4 sm:p-6'>
-            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>
-            <div class='flex flex-row'>
-              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>
-            </div>
-            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>
-            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Do Something
-            </a>
-            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Visit Website
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <div class='flex items-center bg-white'>
-      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
-        <div class='max-w-xs mx-auto'>
-          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>
-          <div class='p-4 sm:p-6'>
-            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>
-            <div class='flex flex-row'>
-              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>
-            </div>
-            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>
-            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Do Something
-            </a>
-            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Visit Website
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
+      {% for restaurant in response %}
       <div class='flex items-center bg-white'>
-      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
-        <div class='max-w-xs mx-auto'>
-          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>
-          <div class='p-4 sm:p-6'>
-            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>
-            <div class='flex flex-row'>
-              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>
+        <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
+          <div class='max-w-xs mx-auto'>
+            <div class='h-[200px]' style="background-image:url('{{ restaurant.photo_link }}');background-size:cover;background-position:center"></div>
+            <div class='p-4 sm:p-6'>
+              <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> {{restaurant.name}} </p>
+              <div class='flex flex-row'>
+                <p class='text-[17px] font-bold text-[#0FB478]'>{{restaurant.vicinity}}</p>
+              </div>
+              <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant: {{restaurant.rating}}, {{restaurant.price_level}}</p>
+              <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
+                  Do Something
+                  </a>
+              <a id="favorite-button-{{ restaurant.id }}" 
+                class="favorite-button block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80"
+                data-favorited="false"
+                onclick="toggleFavorite(this, {{ restaurant.id }})">
+                Favorite
+                </a>
+              <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
+                  Visit Website
+              </a>
             </div>
-            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>
-            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Do Something
-            </a>
-            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Visit Website
-            </a>
           </div>
         </div>
       </div>
-    </div>
-
-      <div class='flex items-center bg-white'>
-      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
-        <div class='max-w-xs mx-auto'>
-          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>
-          <div class='p-4 sm:p-6'>
-            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>
-            <div class='flex flex-row'>
-              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>
-            </div>
-            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>
-            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Do Something
-            </a>
-            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Visit Website
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-      <div class='flex items-center bg-white'>
-      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
-        <div class='max-w-xs mx-auto'>
-          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>
-          <div class='p-4 sm:p-6'>
-            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>
-            <div class='flex flex-row'>
-              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>
-            </div>
-            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>
-            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Do Something
-            </a>
-            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Visit Website
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-
-    <div class='flex items-center bg-white'>
-      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
-        <div class='max-w-xs mx-auto'>
-          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>
-          <div class='p-4 sm:p-6'>
-            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>
-            <div class='flex flex-row'>
-              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>
-            </div>
-            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>
-            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Do Something
-            </a>
-            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                Visit Website
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+          {% endfor %}
   </div>
+
+  <div class="w-1/2 px-6">
+    <div id="map"></div>
+    {{ response|json_script:"myData" }}
+    <script data-response="{{ response }}">
+      // Initialize and add the map
+      function initMap() {
+          const data = JSON.parse(document.getElementById('myData').textContent);
+          console.log(data);
+          console.log(typeof data);
+          // The location of user
+          const position = { lat: parseFloat("{{ current_location.location.lat }}"), lng: parseFloat("{{ current_location.location.lng }}") };
+  
+          // The map, centered at position
+          const map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 14,
+              center: position,
+          });
+  
+          // const customMarker = document.createElement("div");
+          // customMarker.className = "custom-marker";
+          // customMarker.innerHTML = "A";
+          // const advancedMarker = new google.maps.marker.AdvancedMarkerElement({
+          //     map: map,
+          //     position: { lat: 37.7749, lng: -122.4194 }, // Marker position
+          //     content: customMarker, // Custom HTML marker
+          //     collisionBehavior: google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+          // });
+  
+          for (let restaurant of data) {
+              const pos = { lat: restaurant.geometry.location.lat, lng: restaurant.geometry.location.lng};
+              // Add the markers
+              new google.maps.Marker({
+                  map: map,
+                  position: pos,
+                  title: restaurant.title,
+              });
+          }
+      }
+      initMap();
+</script>
+  </div>
+</div>
+{#  <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->#}
+{#    <!-- This is an example component -->#}
+{#    <div class='flex items-center bg-white'>#}
+{#      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>#}
+{#        <div class='max-w-xs mx-auto'>#}
+{#          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>#}
+{#          <div class='p-4 sm:p-6'>#}
+{#            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>#}
+{#            <div class='flex flex-row'>#}
+{#              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>#}
+{#            </div>#}
+{#            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>#}
+{#            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Do Something#}
+{#            </a>#}
+{#            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Visit Website#}
+{#            </a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+{##}
+{##}
+{#    <div class='flex items-center bg-white'>#}
+{#      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>#}
+{#        <div class='max-w-xs mx-auto'>#}
+{#          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>#}
+{#          <div class='p-4 sm:p-6'>#}
+{#            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>#}
+{#            <div class='flex flex-row'>#}
+{#              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>#}
+{#            </div>#}
+{#            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>#}
+{#            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Do Something#}
+{#            </a>#}
+{#            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Visit Website#}
+{#            </a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+{##}
+{#      <div class='flex items-center bg-white'>#}
+{#      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>#}
+{#        <div class='max-w-xs mx-auto'>#}
+{#          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>#}
+{#          <div class='p-4 sm:p-6'>#}
+{#            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>#}
+{#            <div class='flex flex-row'>#}
+{#              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>#}
+{#            </div>#}
+{#            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>#}
+{#            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Do Something#}
+{#            </a>#}
+{#            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Visit Website#}
+{#            </a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+{##}
+{#      <div class='flex items-center bg-white'>#}
+{#      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>#}
+{#        <div class='max-w-xs mx-auto'>#}
+{#          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>#}
+{#          <div class='p-4 sm:p-6'>#}
+{#            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>#}
+{#            <div class='flex flex-row'>#}
+{#              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>#}
+{#            </div>#}
+{#            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>#}
+{#            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Do Something#}
+{#            </a>#}
+{#            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Visit Website#}
+{#            </a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+{##}
+{#      <div class='flex items-center bg-white'>#}
+{#      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>#}
+{#        <div class='max-w-xs mx-auto'>#}
+{#          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>#}
+{#          <div class='p-4 sm:p-6'>#}
+{#            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>#}
+{#            <div class='flex flex-row'>#}
+{#              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>#}
+{#            </div>#}
+{#            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>#}
+{#            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Do Something#}
+{#            </a>#}
+{#            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Visit Website#}
+{#            </a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+{##}
+{##}
+{##}
+{#    <div class='flex items-center bg-white'>#}
+{#      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>#}
+{#        <div class='max-w-xs mx-auto'>#}
+{#          <div class='h-[200px]' style='background-image:url(https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6);background-size:cover;background-position:center'></div>#}
+{#          <div class='p-4 sm:p-6'>#}
+{#            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> Shake Shack </p>#}
+{#            <div class='flex flex-row'>#}
+{#              <p class='text-[17px] font-bold text-[#0FB478]'>Address</p>#}
+{#            </div>#}
+{#            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant</p>#}
+{#            <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Do Something#}
+{#            </a>#}
+{#            <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>#}
+{#                Visit Website#}
+{#            </a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
 
 
 <footer class="bg-gray-100 p-6 text-center">

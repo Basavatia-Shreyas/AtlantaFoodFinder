@@ -76,7 +76,13 @@
               <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant: {{restaurant.rating}}, {{restaurant.price_level}}</p>
               <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
                   Do Something
-              </a>
+                  </a>
+              <a id="favorite-button-{{ restaurant.id }}" 
+                class="favorite-button block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80" 
+                 data-favorited="false"
+           onclick="toggleFavorite(this, {{ restaurant.id }})">
+           Favorite
+                </a>
               <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
                   Visit Website
               </a>
@@ -128,7 +134,24 @@
           }
       }
       initMap();
-    </script>
+
+    function toggleFavorite(button, restaurantId) {
+        const isFavorited = button.getAttribute("data-favorited") === "true";
+
+        if (isFavorited) {
+            button.innerText = "Favorite";
+            button.style.backgroundColor = "#FFC933"; // Original color
+            button.setAttribute("data-favorited", "false");
+            // Optionally: Handle unfavoriting on the server-side here
+        } else {
+            button.innerText = "Favorited";
+            button.style.backgroundColor = "#CCCCCC"; // Gray color
+            button.setAttribute("data-favorited", "true");
+            // Optionally: Handle favoriting on the server-side here
+        }
+    }   
+        
+</script>
   </div>
 </div>
 

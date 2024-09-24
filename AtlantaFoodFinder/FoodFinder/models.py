@@ -33,6 +33,7 @@ class Restaurant(models.Model):
     rating = models.FloatField(null=True, blank=True)
     place_id = models.CharField(max_length=100, unique=True)  # Unique identifier from Google Places API
     created_at = models.DateTimeField(auto_now_add=True)
+    favorite = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
