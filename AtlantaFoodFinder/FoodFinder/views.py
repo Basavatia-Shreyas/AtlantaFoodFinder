@@ -1,8 +1,8 @@
 # const position = { lat: parseFloat('{{ current_location.location.lat }}'), lng: parseFloat('{{ current_loc.location.lng }}') };
 import os
 from dotenv import load_dotenv
-load_dotenv()
-api_key = os.getenv("API_KEY")
+#load_dotenv()
+api_key = "AIzaSyBvFKoFA0xR0v3YnTFb57DNya20-geZvKk"
 
 import json
 import requests
