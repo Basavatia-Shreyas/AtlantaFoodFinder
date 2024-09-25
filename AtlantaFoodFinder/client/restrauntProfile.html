@@ -9,11 +9,27 @@
       theme: {
         extend: {
           colors: {
-
+            // Add custom colors if needed
           }
         }
       }
     }
+
+    let currentSlide = 0;
+
+    function showSlides() {
+      const slides = document.querySelectorAll('.slideshow-image');
+      slides.forEach((slide, index) => {
+        slide.style.opacity = index === currentSlide ? '1' : '0';
+      });
+
+      currentSlide = (currentSlide + 1) % slides.length;
+      setTimeout(showSlides, 1500); // Change image every 3 seconds
+    }
+
+    window.onload = function() {
+      showSlides();
+    };
   </script>
   <style>
     .slideshow-image {
@@ -23,6 +39,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
+      opacity: 0; /* Start with slides hidden */
     }
     .slideshow-container {
       position: relative;
@@ -31,12 +48,13 @@
     }
   </style>
 </head>
-<body class="">
+<body>
 <nav class="flex justify-between items-center p-8 bg-gray-100">
   <h1 class="text-5xl font-serif text-green-800" style="font-family: 'Playfair Display', serif; font-weight: 700;">
     Atlanta Food Finder
   </h1>
-  <ul class="flex space-x-6">
+  <ul class="flex space-x-6 ">
+      <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">Home</a></li>
     <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">My Profile</a></li>
     <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">Favorites</a></li>
     <li>
@@ -48,58 +66,69 @@
   </ul>
 </nav>
 
+
+
 <!-- Background behind card and map -->
-<div class="flex min-h-screen bg-gradient-to-br from-[#F9F5F3] via-[#F9F5F3] to-[#F9F5F3] px-6">
+<div class="flex min-h-screen bg-white px-6">
   <!-- Left Side: Card Section -->
-  <div class="w-3/5 flex items-center">
-    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl h-full overflow-hidden">
-        <div class="max-w-md h-full flex flex-col justify-between">
+  <div class="w-1/2 flex items-center mr-7 pl-4 pb-10">
+    <div class="w-full max-w-l bg-white rounded-3xl shadow-xl h-full overflow-hidden">
+        <div class="max-w-l h-full flex flex-col justify-between">
             <div class="slideshow-container">
-              <div class="slideshow-image" style="background-image:url('https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6');"></div>
-              <div class="slideshow-image" style="background-image:url('https://img.freepik.com/free-photo/italian-cuisine-concept-pasta-ingredients_1220-478.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6'); opacity: 0;"></div>
-              <div class="slideshow-image" style="background-image:url('https://img.freepik.com/free-photo/pasta-spaghetti-with-tomato-sauce-plate_1220-459.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6'); opacity: 0;"></div>
+              <div class="slideshow-image" style="background-image:url('https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6'); opacity: 1;"></div>
+              <div class="slideshow-image" style="background-image:url('https://img.freepik.com/free-photo/italian-cuisine-concept-pasta-ingredients_1220-478.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6');"></div>
+              <div class="slideshow-image" style="background-image:url('https://img.freepik.com/free-photo/pasta-spaghetti-with-tomato-sauce-plate_1220-459.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6');"></div>
             </div>
 
             <div class="p-4 sm:p-3 flex-grow">
                 <p class="font-bold text-gray-700 text-[22px] leading-7 mb-1">Restaurant Name</p>
+
                 <hr class="w-full border-t-2 border-gray-300 my-2">
+
+                   <!-- Clickable Heart Icon -->
+                <button id="heartButton" class="flex items-center p-2 mt-4 bg-white rounded-lg shadow hover:bg-gray-200 transition duration-300">
+                    <ion-icon id="heartIcon" name="heart-outline" class="heart-icon text-red-500 text-3xl"></ion-icon>
+                </button>
                 <!-- Column for Cuisine, Price, and Distance -->
                 <div class="flex flex-col space-y-2">
-                  <p class="text-[17px] font-bold text-[#0FB478]">Price Range: $$</p>
+                  <p class="text-[17px] font-bold text-green-700">Price Range: $$</p>
                   <p class="text-[#7C7C80] font-[15px]">Cuisine: Italian</p>
                   <p class="text-[#7C7C80] font-[15px]">Distance: 2 miles away</p>
                   <p class="text-[#7C7C80] font-[15px]">Description: </p>
                 </div>
 
-                <a target="_blank" href="foodiesapp://food/1001" class="block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-green-300 focus:ring-opacity-80">
-                    Add to favorites
-                </a>
-                <a target="_blank" href="https://apps.apple.com/us/app/id1493631471" class="block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-green-300 focus:ring-opacity-80">
-                    Get Directions
-                </a>
+
+
+             <a target="_blank" href="foodiesapp://food/1001" class="block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#007000] text-white rounded-[14px] hover:bg-[#009000] focus:outline-none focus:ring focus:ring-green-300 focus:ring-opacity-80">
+    Go
+</a>
+
             </div>
         </div>
     </div>
   </div>
 
   <!-- Right Side: Image and Reviews Section -->
-  <div class="w-2/3 flex flex-col items-center justify-start h-full">
+  <div class="w-1/2 flex flex-col items-center justify-start h-full pr-4 pb-10 ">
     <img src="https://img.freepik.com/free-photo/top-view-table-full-delicious-food-composition_23-2148789049.jpg?w=2000&t=st=1678055011~exp=1678055611~hmac=cdd5e1a9bf337b7c8b7f28b7e850cb2e183ab4df7cbeb6f234d151f2a17beec1" alt="Map" class="w-full h-60 rounded-3xl shadow-xl mb-6">
 
     <!-- Reviews Section -->
-  <div class="w-full px-10 flex flex-col gap-2 p-5 bg-gray-800 text-white rounded-3xl"> <!-- Added 'rounded-3xl' for rounded corners -->
-    <h1 class="py-5 text-lg">Reviews</h1>
-    <div class="flex bg-gray-600 bg-opacity-20 border border-gray-200 rounded-md">
-        <ion-icon class="py-4 p-3" name="search-outline"></ion-icon>
-        <input type="email" name="email" id="email" placeholder="Search Review" class="p-2 bg-transparent focus:outline-none">
-    </div>
+    <div class="w-full px-10 flex flex-col gap-2 p-5 bg-gray-800 rounded-3xl text-white">
+        <h1 class="py-5 text-lg">Reviews</h1>
+        <div class="flex bg-gray-600 bg-opacity-20 border border-gray-200 rounded-md">
+            <ion-icon class="py-4 p-3" name="search-outline"></ion-icon>
+            <input type="email" name="email" id="email" placeholder="Search Review" class="p-2 bg-transparent focus:outline-none">
+        </div>
 
         <!-- Tags -->
         <div class="flex flex-wrap gap-2 w-full py-2">
             <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Experience</span>
             <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Quality</span>
-            <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Portion</span>
-
+            <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Design</span>
+            <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Size</span>
+            <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Features</span>
+            <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Value</span>
+            <span class="px-2 p-1 hover:bg-blue-400 bg-gray-950 bg-opacity-30">Replacement</span>
         </div>
 
         <!-- Item Container -->
@@ -111,32 +140,60 @@
                         <div class="w-7 h-7 text-center rounded-full bg-red-500">J</div>
                         <span>Jess Hopkins</span>
                     </div>
-                    <div class="flex p-1 gap-1 text-orange-300">
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star-half"></ion-icon>
+                    <span>⭐⭐⭐⭐⭐</span>
+                </div>
+                <p>This restaurant has amazing food, and I love the atmosphere!</p>
+            </div>
+            <div class="flex flex-col gap-4 bg-gray-700 p-4">
+                <!-- Profile and Rating -->
+                <div class="flex justify justify-between">
+                    <div class="flex gap-2">
+                        <div class="w-7 h-7 text-center rounded-full bg-red-500">S</div>
+                        <span>Sam Wilson</span>
                     </div>
+                    <span>⭐⭐⭐⭐</span>
                 </div>
-
-                <div>
-                    Gorgeous design! Even more responsive than the previous version. A pleasure to use!
+                <p>The pasta is delicious, but the service could be faster.</p>
+            </div>
+            <div class="flex flex-col gap-4 bg-gray-700 p-4">
+                <!-- Profile and Rating -->
+                <div class="flex justify justify-between">
+                    <div class="flex gap-2">
+                        <div class="w-7 h-7 text-center rounded-full bg-red-500">A</div>
+                        <span>Alex Smith</span>
+                    </div>
+                    <span>⭐⭐⭐⭐⭐</span>
                 </div>
-
-                <div class="flex justify-between">
-                    <span>Feb 13, 2021</span>
-                    <button class="p-1 px-2 bg-gray-900 hover:bg-gray-950 border border-gray-950 bg-opacity-60">
-                        <ion-icon name="thumbs-up"></ion-icon>
-                    </button>
-                </div>
+                <p>A delightful experience! I would highly recommend this place.</p>
             </div>
         </div>
     </div>
   </div>
 </div>
 
-<script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<footer class="bg-gray-100 p-6 text-center">
+  <p class="text-gray-700">&copy; 2024 Atlanta Food Finder. All rights reserved.</p>
+</footer>
+<!-- Include Ionicons -->
+<script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons.js"></script>
+
+<script>
+  // Handle heart icon toggle
+  const heartButton = document.getElementById('heartButton');
+  const heartIcon = document.getElementById('heartIcon');
+
+  heartButton.addEventListener('click', () => {
+      if (heartIcon.name === 'heart-outline') {
+          heartIcon.name = 'heart';
+          alert('Added to favorites!');
+      } else {
+          heartIcon.name = 'heart-outline';
+          alert('Removed from favorites!');
+      }
+  });
+</script>
+
+
 </body>
 </html>
