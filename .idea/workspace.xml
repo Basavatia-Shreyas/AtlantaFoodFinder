@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="SEARCH FEATURE WORKING FOR REAL">
+    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="search feature bug fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" afterDir="false" />
@@ -197,7 +197,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727378240698</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="search feature bug fixes">
+      <option name="closed" value="true" />
+      <created>1727379137863</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1727379137864</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -210,6 +218,7 @@
     <MESSAGE value="restart" />
     <MESSAGE value="favorites 1/2" />
     <MESSAGE value="SEARCH FEATURE WORKING FOR REAL" />
-    <option name="LAST_COMMIT_MESSAGE" value="SEARCH FEATURE WORKING FOR REAL" />
+    <MESSAGE value="search feature bug fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="search feature bug fixes" />
   </component>
 </project>
