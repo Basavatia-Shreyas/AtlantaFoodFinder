@@ -58,18 +58,16 @@ import requests
 def index(request):
     global current_loc
     query = request.GET.get('search')
-    searched = False
 
     if query:
-        searched = True
         # If there's a search query, use the Places API to search for it
         try:
             response = map_client.places(query=query, type="restaurant")
+            print(query)
         except Exception as e:
             print(f"Error fetching search results: {e}")
             response = {"Error": "Couldn't perform search"}
     else:
-        searched = False
         # Default behavior: get nearby restaurants
         try:
             current_loc = map_client.geolocate(consider_ip=True)
@@ -92,7 +90,7 @@ def index(request):
     # Prepare context based on the response status
     if response.get("status") == "OK":
         print('Successful search!')
-        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
+        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key, "query": query}
     else:
         print(f"Error: {response.get('status')}")
         context = response

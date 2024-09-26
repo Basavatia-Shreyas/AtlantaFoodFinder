@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="favorites 1/2">
+    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="SEARCH FEATURE WORKING FOR REAL">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" afterDir="false" />
@@ -189,7 +189,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727376088633</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="SEARCH FEATURE WORKING FOR REAL">
+      <option name="closed" value="true" />
+      <created>1727378240697</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1727378240698</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -201,6 +209,7 @@
     <MESSAGE value="no more sign in and register buttons on favorites page" />
     <MESSAGE value="restart" />
     <MESSAGE value="favorites 1/2" />
-    <option name="LAST_COMMIT_MESSAGE" value="favorites 1/2" />
+    <MESSAGE value="SEARCH FEATURE WORKING FOR REAL" />
+    <option name="LAST_COMMIT_MESSAGE" value="SEARCH FEATURE WORKING FOR REAL" />
   </component>
 </project>
