@@ -25,16 +25,17 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user)
 
-from django.db import models
-
 class Restaurant(models.Model):
+    place_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    rating = models.FloatField(null=True, blank=True)
-    place_id = models.CharField(max_length=100, unique=True)  # Unique identifier from Google Places API
-    created_at = models.DateTimeField(auto_now_add=True)
-    favorite = models.BooleanField(default=False)
+    # Add other fields as needed
 
-    def __str__(self):
-        return self.name
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'restaurant')
+
 

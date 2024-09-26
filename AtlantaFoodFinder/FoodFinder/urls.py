@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -9,4 +9,6 @@ urlpatterns = [
     path("favorites/", views.favorites, name="favorites"),
     path("restaurant/", views.restaurant, name="restaurant"),
     path("logout/", views.logoutUser, name="logout"),
+    path('api/toggle-favorite/', views.toggle_favorite, name='toggle_favorite'),
+    path('api/get-favorites/', views.get_favorites, name='get_favorites'),
 ]

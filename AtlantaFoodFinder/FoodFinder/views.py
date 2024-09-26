@@ -15,6 +15,9 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from .models import Restaurant, Favorite
+
 
 import googlemaps
 map_client = googlemaps.Client(api_key)
@@ -69,7 +72,7 @@ def index(request):
         # Default behavior: get nearby restaurants
         try:
             current_loc = map_client.geolocate(consider_ip=True)
-            response = map_client.places_nearby(location=current_loc['location'], radius=500, type="restaurant")
+            response = map_client.places_nearby(location=current_loc['location'], radius=5000, type="restaurant")
         except Exception as e:
             current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
             response = {"Error": "Couldn't load nearby restaurants"}
@@ -144,9 +147,43 @@ def restaurant(request):
 
 @login_required(login_url="login")
 def favorites(request):
-    return render(request, "FoodFinder/favorites.html")
+    favorites = Favorite.objects.filter(user=request.user).select_related('restaurant')
+    return render(request, "FoodFinder/favorites.html", {'favorites': favorites})
 
-from django.shortcuts import render
+@login_required(login_url="login")
+# @require_POST
+def toggle_favorite(request):
+    restaurant_id = request.GET.get('restaurant_id')
+    print(restaurant_id)
+
+    try:
+        restaurant = Restaurant.objects.get(place_id=restaurant_id)
+    except Restaurant.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Restaurant not found'}, status=404)
+
+    favorite, created = Favorite.objects.get_or_create(user=request.user, restaurant=restaurant)
+
+    if not created:
+        favorite.delete()
+        is_favorite = False
+    else:
+        is_favorite = True
+
+    return JsonResponse({'status': 'success', 'is_favorite': is_favorite})
+
+
+@login_required(login_url="login")
+def get_favorites(request):
+    favorites = Favorite.objects.filter(user=request.user).select_related('restaurant')
+    favorite_restaurants = [
+        {
+            'id': fav.restaurant.place_id,
+            'name': fav.restaurant.name,
+            # Add other restaurant fields as needed
+        }
+        for fav in favorites
+    ]
+    return JsonResponse({'favorites': favorite_restaurants})
 
 
 

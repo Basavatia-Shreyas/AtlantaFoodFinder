@@ -49,7 +49,7 @@
     <div class="relative">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
             </svg>
         </div>
         <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search Restaurant, Location..." required />
@@ -77,12 +77,16 @@
               <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
                   Do Something
                   </a>
-              <a id="favorite-button-{{ restaurant.id }}" 
-                class="favorite-button block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80" 
-                 data-favorited="false"
-           onclick="toggleFavorite(this, {{ restaurant.id }})">
-           Favorite
-                </a>
+{#              <a id="favorite-button-{{ restaurant.id }}" #}
+{#                class="favorite-button block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80" #}
+{#                 data-favorited="false"#}
+{#           onclick="toggleFavorite(this, {{ restaurant.id }})">#}
+{#           Favorite#}
+{#                </a>#}
+                <button id="favorite-button-{{ restaurant.id }}" 
+                class="favorite-button block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80"
+                        onclick="toggleFavorite(this, {{ restaurant.place_id }})" data-restaurant-id="{{ restaurant.id }}" data-favorited="false">Favorite
+                </button>
               <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
                   Visit Website
               </a>
@@ -92,6 +96,7 @@
       </div>
           {% endfor %}
   </div>
+
 
   
 
@@ -135,21 +140,53 @@
       }
       initMap();
 
-    function toggleFavorite(button, restaurantId) {
-        const isFavorited = button.getAttribute("data-favorited") === "true";
-
-        if (isFavorited) {
-            button.innerText = "Favorite";
-            button.style.backgroundColor = "#FFC933"; // Original color
-            button.setAttribute("data-favorited", "false");
-            // Optionally: Handle unfavoriting on the server-side here
-        } else {
-            button.innerText = "Favorited";
-            button.style.backgroundColor = "#CCCCCC"; // Gray color
-            button.setAttribute("data-favorited", "true");
-            // Optionally: Handle favoriting on the server-side here
-        }
-    }   
+    {#function toggleFavorite(button, restaurantId) {#}
+    {#    const isFavorited = button.getAttribute("data-favorited") === "true";#}
+    {##}
+    {#    if (isFavorited) {#}
+    {#        button.innerText = "Favorite";#}
+    {#        button.style.backgroundColor = "#FFC933"; // Original color#}
+    {#        button.setAttribute("data-favorited", "false");#}
+    {#        // Optionally: Handle unfavoriting on the server-side here#}
+    {#    } else {#}
+    {#        button.innerText = "Favorited";#}
+    {#        button.style.backgroundColor = "#CCCCCC"; // Gray color#}
+    {#        button.setAttribute("data-favorited", "true");#}
+    {#        // Optionally: Handle favoriting on the server-side here#}
+    {#    }#}
+      
+      function toggleFavorite(button, restaurantId) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        console.log("token created")
+        
+        fetch('/api/toggle-favorite/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken,
+            },
+            body: `restaurant_id=${restaurantId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (data.is_favorite) {
+                    button.innerText = "Favorited";
+                    button.style.backgroundColor = "#CCCCCC"; // Gray color
+                    button.setAttribute("data-favorited", "true");
+                } else {
+                    button.innerText = "Favorite";
+                    button.style.backgroundColor = "#FFC933"; // Original color
+                    button.setAttribute("data-favorited", "false");
+                }
+            } else {
+                console.error('Error toggling favorite:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
         
 </script>
   </div>
