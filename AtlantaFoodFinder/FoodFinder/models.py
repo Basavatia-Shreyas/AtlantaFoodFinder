@@ -22,5 +22,7 @@ class Profile(models.Model):
         max_length=15,
     )
 
+    favorites = models.CharField(max_length=280)
+
     def __str__(self):
         return str(self.user)

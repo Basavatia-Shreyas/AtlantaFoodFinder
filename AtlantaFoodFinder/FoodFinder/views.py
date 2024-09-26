@@ -27,12 +27,20 @@ from .templates.forms import CreateUserForm
 # Create your views here.
 @csrf_protect
 def index(request):
-    try:
-        current_loc = map_client.geolocate(consider_ip=True)
-        response = map_client.places_nearby(location=current_loc['location'], radius=500, type="restaurant")
-    except:
+    current_loc = map_client.geolocate(consider_ip=True)
+    if current_loc == None:
         current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
-        response = {"Error" : "Couldn't load nearby restaurants"}
+
+    search = request.GET.get('search')
+    if search:
+        #print(search)
+        response = map_client.places(search + " restaurant", type="restaurant")
+        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
+    else:
+        response = map_client.places_nearby(location=current_loc['location'], radius=500, type="restaurant")
+        if response["status"] != "OK":
+            response = {"Error" : "Couldn't load nearby restaurants"}
+
     for index, restaurant in enumerate(response['results']):
         try:
             photo_reference = restaurant["photos"][0]["photo_reference"]
@@ -44,18 +52,29 @@ def index(request):
 
     if response["status"] == "OK":
         #print('Successful search!')
-        print(current_loc)
+        #print(current_loc)
         context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
     else:
         print(f"Error: {response['status']}")
         context = response
 
     if request.method == "POST":
-        base_url = reverse('restaurant')
-        place_id = request.POST.get("place")
-        query_string =  urlencode({'place': place_id})
-        url = '{}?{}'.format(base_url, query_string)
-        return redirect(url)
+        if "place" in request.POST.keys():
+            #print("POST REQUEST", request.POST)
+            base_url = reverse('restaurant')
+            place_id = request.POST.get("place")
+            query_string = urlencode({'place': place_id})
+            url = '{}?{}'.format(base_url, query_string)
+            return redirect(url)
+        elif "search" in request.POST.keys():
+            #print("SEARCH", request.POST)
+            base_url = reverse('index')
+            search_query = request.POST.get("search")
+            query_string = urlencode({'search': search_query})
+            url = '{}?{}'.format(base_url, query_string)
+
+            
+            return redirect(url) 
 
     return render(request, "FoodFinder/home.html", context=context)
 
@@ -92,7 +111,7 @@ def create_account(request):
             form = CreateUserForm(request.POST)
 
             favoriteCuisine = request.POST.get("cuisine")
-            print(favoriteCuisine)
+            #print(favoriteCuisine)
             if form.is_valid():
                 form.save()
                 return redirect("index")
@@ -109,12 +128,24 @@ def restaurant(request):
 
     current_loc = map_client.geolocate(consider_ip=True)
 
+    links = []
+    try:
+        for photo in response["result"]["photos"]:
+            photo_reference = photo["photo_reference"]
+            links.append(f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}")
+    except:
+        pass
+
+    response["photo_links"] = links
+
     if response["status"] == "OK":
-        print('Successful search!')
+        #print('Successful search!')
         context = {"response": response, "current_location": current_loc, "google_maps_api_key": api_key}
     else:
         print(f"Error: {response['status']}")
         context = response
+    
+    #print(context)
     return render(request, "FoodFinder/restaurant.html", context=context)
 
 @login_required(login_url="login")
