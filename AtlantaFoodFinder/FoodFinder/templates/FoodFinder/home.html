@@ -24,7 +24,7 @@
     </style>
 </head>
 <body class="">
-{% csrf_token %}
+{#{% csrf_token %}#}
 <nav class="flex justify-between items-center p-6 bg-gray-100">
   <h1 class="text-5xl font-serif text-green-800" style="font-family: 'Playfair Display', serif; font-weight: 700;">
     Atlanta Food Finder
@@ -43,7 +43,7 @@
     {% endif %}
   </ul>
 </nav>
-<form action = "" class="px-6 py-3 max-w-sm">
+<form method="GET" action = "{% url 'index' %}" class="px-6 py-3 max-w-sm">
     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
     {% csrf_token %}
     <div class="relative">
@@ -52,7 +52,8 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
             </svg>
         </div>
-        <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search Restaurant, Location..." required />
+        <input type="text" name="search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
+               placeholder="Search Restaurant, Location..." required value="{{ query|default_if_none:'' }}" />
         <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Search</button>
     </div>
 </form>
@@ -60,6 +61,26 @@
 
 <p class='font-bold text-gray-700 text-green-800 text-[18px]' style='padding-left: 22px;'>Hello {{request.user}}</p>
 <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Restaurants close to {{ current_location }}</p>
+
+{% if query %}
+        <div class="restaurant-list">
+            {% for restaurant in response %}
+                <div class="restaurant">
+                    <!-- Display Restaurant Photo -->
+                    <img src="{{ restaurant.photo_link }}" alt="{{ restaurant.name }}">
+                    
+                    <!-- Display Restaurant Name, Address, and Rating -->
+                    <strong>{{ restaurant.name }}</strong>
+                    <p>Address: {{ restaurant.formatted_address }}</p>
+                    <p>Rating: {{ restaurant.rating }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if searched %}
+            <p class="error">No results found for "{{ query }}".</p>
+        {% endif %}
+    {% endif %}
 
 <div class="flex justify-between items-start p-6"> <!-- Flex container for the grid and image -->
   <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
@@ -160,7 +181,7 @@
         console.log("token created")
         
         fetch('/api/toggle-favorite/', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRFToken': csrfToken,

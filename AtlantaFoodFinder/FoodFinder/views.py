@@ -56,6 +56,7 @@ import requests
 
 @csrf_protect
 def index(request):
+    global current_loc
     query = request.GET.get('search')
     searched = False
 
@@ -63,7 +64,7 @@ def index(request):
         searched = True
         # If there's a search query, use the Places API to search for it
         try:
-            response = map_client.places_text_search(query=query, type="restaurant")
+            response = map_client.places(query=query, type="restaurant")
         except Exception as e:
             print(f"Error fetching search results: {e}")
             response = {"Error": "Couldn't perform search"}
@@ -151,9 +152,9 @@ def favorites(request):
     return render(request, "FoodFinder/favorites.html", {'favorites': favorites})
 
 @login_required(login_url="login")
-# @require_POST
+@require_POST
 def toggle_favorite(request):
-    restaurant_id = request.GET.get('restaurant_id')
+    restaurant_id = request.POST.get('restaurant_id')
     print(restaurant_id)
 
     try:
