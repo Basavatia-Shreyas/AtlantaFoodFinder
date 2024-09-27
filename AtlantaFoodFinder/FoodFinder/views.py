@@ -31,6 +31,21 @@ def index(request):
     if current_loc == None:
         current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
 
+    cuisine_restaurants = {"results" : []}
+    if request.user.is_authenticated:
+        favoriteCuisine = request.user.profile.favoriteCuisine
+        #print(favoriteCuisine)
+        cuisine_restaurants = map_client.places(favoriteCuisine + " restaurants")
+        for index, restaurant in enumerate(cuisine_restaurants['results']):
+            try:
+                photo_reference = restaurant["photos"][0]["photo_reference"]
+                link = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}"
+                cuisine_restaurants['results'][index]["photo_link"] = link
+                cuisine_restaurants['results'][index].pop("photos", None)
+            except:
+                pass
+    
+
     search = request.GET.get('search')
     if search:
         #print(search)
@@ -53,7 +68,7 @@ def index(request):
     if response["status"] == "OK":
         #print('Successful search!')
         #print(current_loc)
-        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
+        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key, 'cuisine': cuisine_restaurants['results']}
     else:
         print(f"Error: {response['status']}")
         context = response
@@ -73,7 +88,6 @@ def index(request):
             query_string = urlencode({'search': search_query})
             url = '{}?{}'.format(base_url, query_string)
 
-            
             return redirect(url) 
 
     return render(request, "FoodFinder/home.html", context=context)

@@ -41,8 +41,8 @@
         </div>
 </form>
 
-<p class='font-bold text-gray-700 text-green-800 text-[18px]' style='padding-left: 22px;'>Hello {{request.user}}</p>
-<p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Restaurants close to you</p>
+<p class='font-bold text-gray-700 text-green-800 text-4xl' style='padding-left: 22px;'>Hello {{request.user}}</p>
+<p class='font-bold text-gray-700 text-green-800 text-xl' style='padding-left: 22px;'>Restaurants close to you</p>
 
 
 
@@ -60,6 +60,17 @@
   <div class="w-1/2 px-6">
     {% include 'FoodFinder/map_home.html' %}
     
+  </div>
+</div>
+
+<div>
+  <h2 class='font-bold text-gray-700 text-green-800 text-4xl' style='padding-left: 22px;'>{{request.user.profile.favoriteCuisine}} restaurants for you</h2>
+  <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
+      
+    {% for restaurant in cuisine %}
+    {% include 'FoodFinder/restaurant_card.html' %}
+    {% endfor %}
+        
   </div>
 </div>
 
