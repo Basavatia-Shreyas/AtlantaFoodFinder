@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 class Profile(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     class Cuisine(models.TextChoices):
         Italian = "Italian"
         Chinese = "Chinese"
@@ -16,13 +17,13 @@ class Profile(models.Model):
         Japanese = "Japanese"
         Vietnamese = "Vietnamese"
 
-    favoriateCuisine = models.CharField(
+    favoriteCuisine = models.CharField(
         choices=Cuisine.choices,
         default=Cuisine.American,
         max_length=15,
     )
 
-    favorites = models.CharField(max_length=280)
+    favorites = models.CharField(max_length=280, null=True)
 
     def __str__(self):
         return str(self.user)

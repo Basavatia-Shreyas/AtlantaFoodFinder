@@ -1,4 +1,3 @@
-# const position = { lat: parseFloat('{{ current_location.location.lat }}'), lng: parseFloat('{{ current_loc.location.lng }}') };
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -16,6 +15,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from FoodFinder.models import Profile
 
 from urllib.parse import urlencode
 
@@ -81,6 +81,8 @@ def index(request):
 @csrf_protect
 def loginPage(request):
 
+    favorite_cuisine = request.GET.get("cuisine")
+
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -109,14 +111,26 @@ def create_account(request):
 
         if request.method == "POST":
             form = CreateUserForm(request.POST)
+            print(request.POST)
 
             favoriteCuisine = request.POST.get("cuisine")
             #print(favoriteCuisine)
             if form.is_valid():
                 form.save()
-                return redirect("index")
+                user = authenticate(request, username=request.POST.get("username"), password=request.POST.get("password1"))
+
+                cuisine = request.POST.get("cuisine")
+                #user.profile.favoriteCuisine = cuisine
+                profile = Profile(user=user, favoriteCuisine=cuisine, favorites="")
+                profile.save()
+
+                base_url = reverse('login')
+                query_string = urlencode({'cuisine': cuisine})
+                url = '{}?{}'.format(base_url, query_string)
+                return redirect(url)
             else:
-                messages.info(request, "Please enter valid values for all the fields")
+                error_str = ''.join([f'{value} ' for key, value in form.error_messages.items()]).strip()
+                messages.info(request, error_str)
 
         context = {"form" : form}
         return render(request, "FoodFinder/create_account.html", context)
@@ -125,6 +139,7 @@ def create_account(request):
 def restaurant(request):
     place_id = request.GET.get('place')
     response = map_client.place(place_id)
+
 
     current_loc = map_client.geolocate(consider_ip=True)
 
@@ -137,6 +152,7 @@ def restaurant(request):
         pass
 
     response["photo_links"] = links
+    response["favorites"] = request.user.profile.favorites
 
     if response["status"] == "OK":
         #print('Successful search!')
@@ -145,9 +161,57 @@ def restaurant(request):
         print(f"Error: {response['status']}")
         context = response
     
-    #print(context)
+    if request.method == "POST":
+        if "favorite" in request.POST.keys():
+            print("favorite request")
+            # Add to the current user's favorites
+            if place_id not in request.user.profile.favorites and len(request.user.profile.favorites) < 280:
+                print("adding to favorites")
+                curr_profile = Profile.objects.get(user=request.user)
+                curr_profile.favorites += " " + place_id
+                curr_profile.save()
+            if place_id in request.user.profile.favorites:
+                curr_profile = Profile.objects.get(user=request.user)
+                curr_profile.favorites = curr_profile.favorites.replace(" " + place_id, "")
+                curr_profile.save()
+            
+            base_url = reverse('restaurant')
+            place_id = request.POST.get("place")
+            query_string = urlencode({'place': place_id})
+            url = '{}?{}'.format(base_url, query_string)
+            return redirect(url)
+
     return render(request, "FoodFinder/restaurant.html", context=context)
 
 @login_required(login_url="login")
 def favorites(request):
-    return render(request, "FoodFinder/favorites.html")
+    favorite_str = Profile.objects.get(user=request.user).favorites
+    #print(favorite_str)
+    favorites = favorite_str.split(" ")
+    response = {"favorites":[]}
+    print(favorites)
+    for place_id in favorites[1:]:
+        print("PLACEID", place_id)
+        temp_response = map_client.place(place_id)
+        if temp_response["status"] == "OK":
+            photo_reference = temp_response['result']['photos'][0]["photo_reference"]
+            link = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}"
+            temp_response['result']["photo_link"] = link
+            response['favorites'].append(temp_response['result'])
+
+    current_loc = map_client.geolocate(consider_ip=True)
+    if current_loc == None:
+        current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
+
+    if request.method == "POST":
+        if "place" in request.POST.keys():
+            #print("POST REQUEST", request.POST)
+            base_url = reverse('restaurant')
+            place_id = request.POST.get("place")
+            query_string = urlencode({'place': place_id})
+            url = '{}?{}'.format(base_url, query_string)
+            return redirect(url)
+
+    context={"response": response["favorites"], "google_maps_api_key": api_key, "current_location": current_loc}
+    
+    return render(request, "FoodFinder/favorites.html", context=context)

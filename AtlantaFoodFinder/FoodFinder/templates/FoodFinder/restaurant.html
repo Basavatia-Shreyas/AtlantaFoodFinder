@@ -74,9 +74,17 @@
                 <hr class="w-full border-t-2 border-gray-300 my-2">
 
                    <!-- Clickable Heart Icon -->
-                <button id="heartButton" class="flex items-center p-2 mt-4 bg-white rounded-lg shadow hover:bg-gray-200 transition duration-300">
-                    <ion-icon id="heartIcon" name="heart-outline" class="heart-icon text-red-500 text-3xl"></ion-icon>
-                </button>
+                <form method="POST" action="#">
+                  {% csrf_token %}
+                  <input type="hidden" name="place" value="{{ response.result.place_id }}">
+                  <button type="submit" id="heartButton" name="favorite" class="flex items-center p-2 mt-4 bg-white rounded-lg shadow hover:bg-gray-200 transition duration-300">
+                    {% if response.result.place_id in response.favorites %}
+                    <i class="fa-solid fa-heart"></i>
+                    {% else %}
+                    <i class="fa-regular fa-heart"></i>
+                    {% endif %}
+                  </button>
+                </form>
                 <!-- Column for Cuisine, Price, and Distance -->
                 <div class="flex flex-col space-y-2">
                   <p class="text-[17px] font-bold text-green-700">Price Range: $$</p>
