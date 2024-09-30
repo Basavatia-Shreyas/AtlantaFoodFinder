@@ -17,6 +17,10 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from FoodFinder.models import Profile
 
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+
 from urllib.parse import urlencode
 
 import googlemaps
@@ -229,3 +233,15 @@ def favorites(request):
     context={"response": response["favorites"], "google_maps_api_key": api_key, "current_location": current_loc}
     
     return render(request, "FoodFinder/favorites.html", context=context)
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'FoodFinder/password_reset.html'
+    email_template_name = 'FoodFinder/password_reset_email.html'
+    subject_template_name = 'FoodFinder/password_reset_subject.txt'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('login')
+

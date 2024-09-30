@@ -236,19 +236,20 @@
             console.log(data);
             console.log(typeof data);
             // The location of user
-            const position = { lat: parseFloat("{{ current_location.location.lat }}"), lng: parseFloat("{{ current_location.location.lng }}") };
+            const res_pos = { lat: data.result.geometry.location.lat, lng: data.result.geometry.location.lng }
             //const position = { lat: 37.43238031167444, lng: -122.16795397128632 };
             // The map, centered at position
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 14,
-                center: position,
+                center: res_pos,
                 mapId: "RESTAURANT_MAP",
             });
 
+            
             const AdvancedMarkerElement = new google.maps.marker.AdvancedMarkerElement({
                 map,
                 content: buildContent(data.result),
-                position: position,
+                position: res_pos,
                 title: data.result.name,
             });
 
