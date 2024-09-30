@@ -48,7 +48,7 @@
     <div class="relative flex-grow mr-2 w-700"> <!-- Set the width to 700px -->
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
         {% csrf_token %}
-        <input type="text" name="search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search Restaurant, Location..." required value="{{ query }}" />
+        <input type="text" name="search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search Restaurant, Location..." />
     </div>
 
     <div class="mr-2"> <!-- Remove flex-grow for this element -->
@@ -104,9 +104,26 @@
 
 <p class='font-bold text-gray-700 text-green-800 text-[18px]' style='padding-left: 22px;'>Hello {{request.user}}</p>
 {% if query %}
+    {% if radius %}
+        {% if rating %}
+            <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Search results for "{{ query }}". Radius: {{ radius }}. Minimum Rating: {{ rating }} star. </p>
+        {% endif %}    
+    <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Search results for "{{ query }}". Radius: {{ radius }}.</p>
+    {% endif %}
+    {% if rating %}
+        <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Search results for "{{ query }}". Minimum Rating: {{ rating }} star. </p>
+    {% endif %}
     <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Search Results for "{{ query }}"</p>
-    {% else %}
-    <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Restaurants close to {{ current_location }}</p>
+{% else %}
+    {% if radius %}
+        {% if rating %}
+            <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Restaurants in a {{ radius }} mile radius of {{ current_location }}. Minimum Rating: {{ rating }}.</p>
+        {% endif %}    
+        <p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Restaurants in a {{ radius }} mile radius of {{ current_location }}.</p>
+        {% endif %}
+    {% if rating %}
+        Restaurants with a minimum Rating of {{ rating }}.
+    {% endif %}
 {% endif %}
 <div class="flex justify-between items-start p-6"> <!-- Flex container for the grid and image -->
   <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
@@ -126,9 +143,7 @@
               </div>
               <p class='text-[#7C7C80] font-[15px] mt-3'>Rating: {{restaurant.rating}}</p>
               <p class='text-[#7C7C80] font-[15px] mt-3'>Price Level: {{restaurant.price_level}}</p>
-              <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                  Do Something
-                  </a>
+
 {#              <a id="favorite-button-{{ restaurant.id }}" #}
 {#                class="favorite-button block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80" #}
 {#                 data-favorited="false"#}

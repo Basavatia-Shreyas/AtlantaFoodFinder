@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="search feature bug fixes">
+    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="filter option NOT WORKING YET">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" afterDir="false" />
@@ -77,18 +77,6 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="QodanaHighlightedReportService">
-    <option name="localRunNotPublishedPersistedInfo">
-      <LocalReportPersistedInfo>
-        <option name="path" value="/private/var/folders/vl/msl5cyg54d32j9wyy9c9ccgh0000gn/T/qodana_output/qodana.sarif.json" />
-        <option name="reportGuid" value="c584ed2e-2d3a-4b4b-99b7-cd9d786d1010" />
-        <option name="reportName" value="AtlantaFoodFinder/qodana/2024-09-26" />
-      </LocalReportPersistedInfo>
-    </option>
-  </component>
-  <component name="QodanaIsSelectedPersistenceService">
-    <option name="selectedOrLoading" value="true" />
-  </component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/vl/msl5cyg54d32j9wyy9c9ccgh0000gn/T/qodana_output/qodana.sarif.json" reportGuid="c584ed2e-2d3a-4b4b-99b7-cd9d786d1010" reportId="AtlantaFoodFinder/qodana/2024-09-26" />
@@ -148,6 +136,7 @@
       <workItem from="1727105525843" duration="855000" />
       <workItem from="1727106392693" duration="2888000" />
       <workItem from="1727201147112" duration="5188000" />
+      <workItem from="1727645668991" duration="4370000" />
     </task>
     <task id="LOCAL-00001" summary="search button">
       <option name="closed" value="true" />
@@ -205,7 +194,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727379137864</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="filter option NOT WORKING YET">
+      <option name="closed" value="true" />
+      <created>1727384473503</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1727384473503</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -219,6 +216,7 @@
     <MESSAGE value="favorites 1/2" />
     <MESSAGE value="SEARCH FEATURE WORKING FOR REAL" />
     <MESSAGE value="search feature bug fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="search feature bug fixes" />
+    <MESSAGE value="filter option NOT WORKING YET" />
+    <option name="LAST_COMMIT_MESSAGE" value="filter option NOT WORKING YET" />
   </component>
 </project>

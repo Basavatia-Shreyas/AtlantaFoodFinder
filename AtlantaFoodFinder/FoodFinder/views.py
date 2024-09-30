@@ -70,54 +70,46 @@ def index(request):
     if radius:
         radius = int(radius) * 1609
 
-    if radius and rating and query:
+    if radius and query:
         print(type(rating))
         print(type(radius))
         try:
             current_loc = map_client.geolocate(consider_ip=True)
-            response = map_client.places_nearby(query=query, location=current_loc['location'], radius=radius, rating=rating, type="restaurant")
+            response = map_client.places_nearby(keyword=query, location=current_loc['location'], radius=radius, type="restaurant")
+
+            if rating:
+                print("RATING")
+                response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
+
         except Exception as e:
             current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
             response = {"Error": "Couldn't load nearby restaurants"}
-    elif radius and rating:
-        try:
-            current_loc = map_client.geolocate(consider_ip=True)
-            response = map_client.places_nearby(location=current_loc['location'], radius=radius, rating=rating, type="restaurant")
-        except Exception as e:
-            current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
-            response = {"Error": "Couldn't load nearby restaurants"}
-    elif radius and query:
-        try:
-            current_loc = map_client.geolocate(consider_ip=True)
-            response = map_client.places_nearby(location=current_loc['location'], radius=radius, query=query, type="restaurant")
-        except Exception as e:
-            current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
-            response = {"Error": "Couldn't load nearby restaurants"}
-    elif rating and query:
-        try:
-            response = map_client.places(query=query, rating=rating, type="restaurant")
-            print(query)
-        except Exception as e:
-            print(f"Error fetching search results: {e}")
-            response = {"Error": "Couldn't perform search"}
-    elif radius and not rating and not query:
+    elif radius:
         try:
             current_loc = map_client.geolocate(consider_ip=True)
             response = map_client.places_nearby(location=current_loc['location'], radius=radius, type="restaurant")
+            print(radius)
+            if rating:
+                response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
+
         except Exception as e:
             current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
             response = {"Error": "Couldn't load nearby restaurants"}
-    elif rating and not radius and not query:
+
+    elif query:
         try:
-            response = map_client.places(rating=rating, type="restaurant")
+            response = map_client.places(query=query, type="restaurant")
+            if rating:
+                response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
             print(query)
         except Exception as e:
             print(f"Error fetching search results: {e}")
             response = {"Error": "Couldn't perform search"}
-    elif query and not radius and not rating:
+    elif rating:
         # If there's a search query, use the Places API to search for it
         try:
-            response = map_client.places(query=query, type="restaurant")
+            response = map_client.places(type="restaurant")
+            response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
             print(query)
         except Exception as e:
             print(f"Error fetching search results: {e}")
