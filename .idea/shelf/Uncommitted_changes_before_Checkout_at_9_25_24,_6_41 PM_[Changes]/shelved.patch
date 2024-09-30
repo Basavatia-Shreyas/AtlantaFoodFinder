@@ -1,0 +1,195 @@
+Index: AtlantaFoodFinder/FoodFinder/models.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django.db import models\nfrom django.contrib.auth.models import User\n\n# Create your models here.\nclass Profile(models.Model):\n    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)\n    class Cuisine(models.TextChoices):\n        Italian = \"Italian\"\n        Chinese = \"Chinese\"\n        Thai = \"Thai\"\n        Indian = \"Indian\"\n        Mexican = \"Mexican\"\n        American = \"American\"\n        Greek = \"Greek\"\n        Korean = \"Korean\"\n        Japanese = \"Japanese\"\n        Vietnamese = \"Vietnamese\"\n\n    favoriteCuisine = models.CharField(\n        choices=Cuisine.choices,\n        default=Cuisine.American,\n        max_length=15,\n    )\n\n    def __str__(self):\n        return str(self.user)\n\nfrom django.db import models\n\nclass Restaurant(models.Model):\n    name = models.CharField(max_length=255)\n    address = models.CharField(max_length=255)\n    rating = models.FloatField(null=True, blank=True)\n    place_id = models.CharField(max_length=100, unique=True)  # Unique identifier from Google Places API\n    created_at = models.DateTimeField(auto_now_add=True)\n    favorite = models.BooleanField(default=False)\n\n    def __str__(self):\n        return self.name\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/AtlantaFoodFinder/FoodFinder/models.py b/AtlantaFoodFinder/FoodFinder/models.py
+--- a/AtlantaFoodFinder/FoodFinder/models.py	(revision 2ff7f659e0d20da9d182d06d94cd4436627a22a6)
++++ b/AtlantaFoodFinder/FoodFinder/models.py	(date 1727228630906)
+@@ -29,10 +29,9 @@
+ 
+ class Restaurant(models.Model):
+     name = models.CharField(max_length=255)
+-    address = models.CharField(max_length=255)
+-    rating = models.FloatField(null=True, blank=True)
++    # address = models.CharField(max_length=255)
++    # rating = models.FloatField(null=True, blank=True)
+     place_id = models.CharField(max_length=100, unique=True)  # Unique identifier from Google Places API
+-    created_at = models.DateTimeField(auto_now_add=True)
+     favorite = models.BooleanField(default=False)
+ 
+     def __str__(self):
+Index: AtlantaFoodFinder/FoodFinder/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># const position = { lat: parseFloat('{{ current_location.location.lat }}'), lng: parseFloat('{{ current_loc.location.lng }}') };\nimport os\nfrom dotenv import load_dotenv\nload_dotenv()\napi_key = os.getenv(\"API_KEY\")\n\nimport json\nimport requests\n\nfrom django.http import JsonResponse\nfrom django.shortcuts import render, redirect\nfrom django.http import HttpResponse\nfrom django.contrib.auth.forms import AuthenticationForm\nfrom django.views.decorators.csrf import csrf_protect\nfrom django.contrib.auth import authenticate, login, logout\nfrom django.contrib import messages\nfrom django.contrib.auth.decorators import login_required\n\nimport googlemaps\nmap_client = googlemaps.Client(api_key)\n\nfrom .templates.forms import CreateUserForm\nimport requests\n\n# Create your views here.\n# @csrf_protect\n# def index(request):\n#\n#     try:\n#         current_loc = map_client.geolocate(consider_ip=True)\n#         response = map_client.places_nearby(location=current_loc['location'], radius=500, type=\"restaurant\")\n#     except:\n#         current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}\n#         response = {\"Error\" : \"Couldn't load nearby restaurants\"}\n#     for index, restaurant in enumerate(response['results']):\n#         try:\n#             photo_reference = restaurant[\"photos\"][0][\"photo_reference\"]\n#             link = f\"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}\"\n#             response['results'][index][\"photo_link\"] = link\n#             response['results'][index].pop(\"photos\", None)\n#         except:\n#             pass\n#\n#     if response[\"status\"] == \"OK\":\n#         print('Successful search!')\n#         print(current_loc)\n#         context = {\"response\": response['results'], \"current_location\": current_loc, \"google_maps_api_key\": api_key}\n#     else:\n#         print(f\"Error: {response['status']}\")\n#         context = response\n#\n#     return render(request, \"FoodFinder/home.html\", context=context)\n\n@csrf_protect\ndef index(request):\n    query = request.GET.get('search')\n    searched = False\n\n    if query:\n        searched = True\n        # If there's a search query, use the Places API to search for it\n        try:\n            response = map_client.places_text_search(query=query, type=\"restaurant\")\n        except Exception as e:\n            print(f\"Error fetching search results: {e}\")\n            response = {\"Error\": \"Couldn't perform search\"}\n    else:\n        searched = False\n        # Default behavior: get nearby restaurants\n        try:\n            current_loc = map_client.geolocate(consider_ip=True)\n            response = map_client.places_nearby(location=current_loc['location'], radius=500, type=\"restaurant\")\n        except Exception as e:\n            current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}\n            response = {\"Error\": \"Couldn't load nearby restaurants\"}\n\n    # Process response to add photo links\n    for index, restaurant in enumerate(response.get('results', [])):\n        try:\n            photo_reference = restaurant.get(\"photos\", [{}])[0].get(\"photo_reference\")\n            if photo_reference:\n                link = f\"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}\"\n                response['results'][index][\"photo_link\"] = link\n                response['results'][index].pop(\"photos\", None)\n        except Exception as e:\n            print(f\"Error processing photos: {e}\")\n\n    # Prepare context based on the response status\n    if response.get(\"status\") == \"OK\":\n        print('Successful search!')\n        context = {\"response\": response['results'], \"current_location\": current_loc, \"google_maps_api_key\": api_key}\n    else:\n        print(f\"Error: {response.get('status')}\")\n        context = response\n\n    return render(request, \"FoodFinder/home.html\", context=context)\n\n\n@csrf_protect\ndef loginPage(request):\n\n    if request.method == \"POST\":\n        username = request.POST.get(\"username\")\n        password = request.POST.get(\"password\")\n\n        user = authenticate(request, username=username, password=password)\n\n        if user is not None:\n            login(request, user)\n            return redirect(\"index\")\n        else:\n            messages.info(request, \"Username or password is incorrect\")\n\n    context = {}\n    return render(request, \"FoodFinder/login.html\", context)\n\ndef logoutUser(request):\n    logout(request)\n    return redirect(\"login\")\n\n@csrf_protect\ndef create_account(request):\n    if request.user.is_authenticated:\n        return redirect(\"index\")\n    else:\n        form = CreateUserForm()\n\n        if request.method == \"POST\":\n            form = CreateUserForm(request.POST)\n\n            favoriteCuisine = request.POST.get(\"cuisine\")\n            print(favoriteCuisine)\n            if form.is_valid():\n                form.save()\n                return redirect(\"index\")\n            else:\n                messages.info(request, \"Please enter valid values for all the fields\")\n\n        context = {\"form\" : form}\n        return render(request, \"FoodFinder/create_account.html\", context)\n\ndef restaurant(request):\n    return render(request, \"FoodFinder/restaurant.html\")\n\n@login_required(login_url=\"login\")\ndef favorites(request):\n    return render(request, \"FoodFinder/favorites.html\")\n\nfrom django.shortcuts import render\n\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/AtlantaFoodFinder/FoodFinder/views.py b/AtlantaFoodFinder/FoodFinder/views.py
+--- a/AtlantaFoodFinder/FoodFinder/views.py	(revision 2ff7f659e0d20da9d182d06d94cd4436627a22a6)
++++ b/AtlantaFoodFinder/FoodFinder/views.py	(date 1727298265069)
+@@ -1,6 +1,11 @@
+ # const position = { lat: parseFloat('{{ current_location.location.lat }}'), lng: parseFloat('{{ current_loc.location.lng }}') };
+ import os
++from xml.etree.ElementPath import xpath_tokenizer
++
+ from dotenv import load_dotenv
++
++from .models import Restaurant
++
+ load_dotenv()
+ api_key = os.getenv("API_KEY")
+ 
+@@ -77,6 +82,20 @@
+     # Process response to add photo links
+     for index, restaurant in enumerate(response.get('results', [])):
+         try:
++            name = restaurant['name']
++            place_id = restaurant['place_id']
++            favorite = False
++
++            # Instantiate the model but do not save it yet
++            new_restaurant = Restaurant(name=name, place_id=place_id, favorite=favorite)
++            # Modify additional fields if needed
++            # new_restaurant.favorite = True
++            # Save the instance to the database
++            new_restaurant.save()
++            print(name)
++            print(place_id)
++            print(favorite)
++
+             photo_reference = restaurant.get("photos", [{}])[0].get("photo_reference")
+             if photo_reference:
+                 link = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}"
+@@ -144,9 +163,8 @@
+ 
+ @login_required(login_url="login")
+ def favorites(request):
++
+     return render(request, "FoodFinder/favorites.html")
+ 
+-from django.shortcuts import render
+-
+ 
+ 
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"fd7025d3-706a-4e7e-ad5b-8eded8eb47f5\" name=\"Changes\" comment=\"restart\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"DjangoConsoleOptions\" custom-start-script=\"import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)\">\n    <option name=\"myCustomStartScript\" value=\"import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\n      <map>\n        <entry key=\"$PROJECT_DIR$\" value=\"shreyas\" />\n      </map>\n    </option>\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;mihikacg&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\">{\n  &quot;selectedUrlAndAccountId&quot;: {\n    &quot;url&quot;: &quot;https://github.com/Basavatia-Shreyas/AtlantaFoodFinder.git&quot;,\n    &quot;accountId&quot;: &quot;6d51f673-a428-41f6-8cd0-9f13b8cae2d4&quot;\n  },\n  &quot;recentNewPullRequestHead&quot;: {\n    &quot;server&quot;: {\n      &quot;useHttp&quot;: false,\n      &quot;host&quot;: &quot;github.com&quot;,\n      &quot;port&quot;: null,\n      &quot;suffix&quot;: null\n    },\n    &quot;owner&quot;: &quot;Basavatia-Shreyas&quot;,\n    &quot;repository&quot;: &quot;AtlantaFoodFinder&quot;\n  }\n}</component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 1\n}</component>\n  <component name=\"ProjectId\" id=\"2mTfXKj7L1K1exgcHRr1FEqNAH4\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;Django Server.AtlantaFoodFinder.executor&quot;: &quot;Run&quot;,\n    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;ToolWindow.Database.ShowToolbar&quot;: &quot;false&quot;,\n    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,\n    &quot;git-widget-placeholder&quot;: &quot;mihibackend&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/Users/Mihika/CS2340/AtlantaFoodFinder/AtlantaFoodFinder/FoodFinder/templates/FoodFinder&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder\" />\n    </key>\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder\" />\n    </key>\n  </component>\n  <component name=\"RunManager\">\n    <configuration name=\"AtlantaFoodFinder\" type=\"Python.DjangoServer\" factoryName=\"Django server\">\n      <module name=\"AtlantaFoodFinder\" />\n      <option name=\"ENV_FILES\" value=\"\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n        <env name=\"DJANGO_SETTINGS_MODULE\" value=\"AtlantaFoodFinder.settings\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"launchJavascriptDebuger\" value=\"false\" />\n      <option name=\"port\" value=\"8000\" />\n      <option name=\"host\" value=\"localhost\" />\n      <option name=\"additionalOptions\" value=\"\" />\n      <option name=\"browserUrl\" value=\"\" />\n      <option name=\"runTestServer\" value=\"false\" />\n      <option name=\"runNoReload\" value=\"false\" />\n      <option name=\"useCustomRunCommand\" value=\"false\" />\n      <option name=\"customRunCommand\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-PY-242.21829.153\" />\n        <option value=\"bundled-python-sdk-464836ebc622-b74155a9e76b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.21829.153\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"fd7025d3-706a-4e7e-ad5b-8eded8eb47f5\" name=\"Changes\" comment=\"test\" />\n      <created>1727105524418</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1727105524418</updated>\n      <workItem from=\"1727105525843\" duration=\"855000\" />\n      <workItem from=\"1727106392693\" duration=\"2888000\" />\n      <workItem from=\"1727201147112\" duration=\"5188000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"search button\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1727111885796</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1727111885797</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"no more sign in and register buttons on favorites page\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1727112168906</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1727112168906</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"restart\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1727129549365</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1727129549365</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"restart\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1727205546250</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1727205546250</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"5\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"test\" />\n    <MESSAGE value=\"search button\" />\n    <MESSAGE value=\"no more sign in and register buttons on favorites page\" />\n    <MESSAGE value=\"restart\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"restart\" />\n  </component>\n</project>
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 2ff7f659e0d20da9d182d06d94cd4436627a22a6)
++++ b/.idea/workspace.xml	(date 1727304082876)
+@@ -4,8 +4,11 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="restart">
++    <list default="true" id="fd7025d3-706a-4e7e-ad5b-8eded8eb47f5" name="Changes" comment="favorites button">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/models.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder/home.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/views.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -45,6 +48,9 @@
+     &quot;repository&quot;: &quot;AtlantaFoodFinder&quot;
+   }
+ }</component>
++  <component name="ProblemsViewState">
++    <option name="selectedTabId" value="ProjectErrors" />
++  </component>
+   <component name="ProjectColorInfo">{
+   &quot;associatedIndex&quot;: 1
+ }</component>
+@@ -53,24 +59,24 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;Django Server.AtlantaFoodFinder.executor&quot;: &quot;Run&quot;,
+-    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;ToolWindow.Database.ShowToolbar&quot;: &quot;false&quot;,
+-    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;mihibackend&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;/Users/Mihika/CS2340/AtlantaFoodFinder/AtlantaFoodFinder/FoodFinder/templates/FoodFinder&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "Django Server.AtlantaFoodFinder.executor": "Run",
++    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "ToolWindow.Database.ShowToolbar": "false",
++    "django.template.preview.state": "SHOW_EDITOR",
++    "git-widget-placeholder": "mihibackend",
++    "last_opened_file_path": "/Users/Mihika/CS2340/AtlantaFoodFinder/AtlantaFoodFinder/FoodFinder/templates/FoodFinder",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "settings.editor.selected.configurable": "preferences.lookFeel",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="$PROJECT_DIR$/AtlantaFoodFinder/FoodFinder/templates/FoodFinder" />
+@@ -124,7 +130,8 @@
+       <updated>1727105524418</updated>
+       <workItem from="1727105525843" duration="855000" />
+       <workItem from="1727106392693" duration="2888000" />
+-      <workItem from="1727201147112" duration="5188000" />
++      <workItem from="1727201147112" duration="8043000" />
++      <workItem from="1727297971916" duration="913000" />
+     </task>
+     <task id="LOCAL-00001" summary="search button">
+       <option name="closed" value="true" />
+@@ -158,7 +165,23 @@
+       <option name="project" value="LOCAL" />
+       <updated>1727205546250</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="favorites button">
++      <option name="closed" value="true" />
++      <created>1727228012709</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1727228012709</updated>
++    </task>
++    <task id="LOCAL-00006" summary="favorites button">
++      <option name="closed" value="true" />
++      <created>1727228051092</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1727228051092</updated>
++    </task>
++    <option name="localTasksCounter" value="7" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -169,6 +192,7 @@
+     <MESSAGE value="search button" />
+     <MESSAGE value="no more sign in and register buttons on favorites page" />
+     <MESSAGE value="restart" />
+-    <option name="LAST_COMMIT_MESSAGE" value="restart" />
++    <MESSAGE value="favorites button" />
++    <option name="LAST_COMMIT_MESSAGE" value="favorites button" />
+   </component>
+ </project>
+\ No newline at end of file
