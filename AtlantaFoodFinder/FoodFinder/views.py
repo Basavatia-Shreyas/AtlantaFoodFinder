@@ -31,6 +31,7 @@ from .templates.forms import CreateUserForm
 # Create your views here.
 @csrf_protect
 def index(request):
+
     current_loc = map_client.geolocate(consider_ip=True)
     if current_loc == None:
         current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
@@ -49,9 +50,50 @@ def index(request):
             except:
                 pass
     
-
+    rating = request.GET.get("rating")
+    radius = request.GET.get("radius")
     search = request.GET.get('search')
-    if search:
+
+    if rating:
+        rating = int(rating)
+    if radius:
+        radius = int(radius) * 1609
+
+
+    if radius and search:
+        print(type(rating))
+        print(type(radius))
+        try:
+            current_loc = map_client.geolocate(consider_ip=True)
+            response = map_client.places_nearby(keyword=search, location=current_loc['location'], radius=radius, type="restaurant")
+
+            if rating:
+                print("RATING")
+                response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
+
+        except Exception as e:
+            current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
+            response = {"Error": "Couldn't load nearby restaurants"}
+    elif radius:
+        try:
+            current_loc = map_client.geolocate(consider_ip=True)
+            response = map_client.places_nearby(location=current_loc['location'], radius=radius, type="restaurant")
+            print(radius)
+            if rating:
+                response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
+
+        except Exception as e:
+            current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
+            response = {"Error": "Couldn't load nearby restaurants"}
+    elif rating:
+         # If there's a search query, use the Places API to search for it
+        try:
+            response = map_client.places(type="restaurant")
+            response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
+        except Exception as e:
+            print(f"Error fetching search results: {e}")
+            response = {"Error": "Couldn't perform search"}
+    elif search:
         #print(search)
         response = map_client.places(search + " restaurant", type="restaurant")
         context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
