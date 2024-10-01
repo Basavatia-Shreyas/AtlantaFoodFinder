@@ -135,7 +135,6 @@ def index(request):
             url = '{}?{}'.format(base_url, query_string)
 
             return redirect(url) 
-
     return render(request, "FoodFinder/home.html", context=context)
 
 @csrf_protect
