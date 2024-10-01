@@ -34,6 +34,10 @@ from .templates.forms import CreateUserForm
 # Create your views here.
 @csrf_protect
 def index(request):
+    if hasattr(request.user, 'profile'):
+        favoriteCuisine = request.user.profile.favoriteCuisine
+    else:
+        Profile.objects.create(user=request.user)
     current_loc = map_client.geolocate(consider_ip=True)
     if current_loc == None:
         current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
