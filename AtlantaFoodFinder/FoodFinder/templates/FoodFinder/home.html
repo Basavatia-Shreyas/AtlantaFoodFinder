@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
 <head>
@@ -15,7 +16,6 @@
       }
     }
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" defer></script>
     <style>
         #map {
             height: 80vh;
@@ -25,36 +25,35 @@
 </head>
 <body class="">
 {% csrf_token %}
-<nav class="flex justify-between items-center p-6 bg-gray-100">
-  <h1 class="text-5xl font-serif text-green-800" style="font-family: 'Playfair Display', serif; font-weight: 700;">
-    Atlanta Food Finder
-  </h1>
-  <ul class="flex space-x-6">
-    <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">My Profile</a></li>
-    <li><a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700">Favorites</a></li>
-    <li>
-      <a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Sign In</a>
-    </li>
-    <li>
-      <a href="#" class="text-lg font-semibold text-gray-700 hover:text-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300 border-b-2 border-black pb-1">Register</a>
-    </li>
-  </ul>
-</nav>
-<form class="px-6 py-3 max-w-sm">
-    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-    <div class="relative">
-        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-            </svg>
-        </div>
-        <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search Restaurant, Location..." required />
-        <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Search</button>
-    </div>
+{% include 'FoodFinder/navbar.html' %}
+
+<form method="GET" action="{% url 'index' %}" class="flex items-center justify-start px-6 py-3 max-w-full">
+  <div class="relative flex-grow mr-2 w-700 h-full"> <!-- Set the width to 700px -->
+      <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+      {% csrf_token %}
+      <input type="text" name="search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search Restaurant, Location..." />
+  </div>
+
+  <div class="mr-2"> <!-- Remove flex-grow for this element -->
+      <select name="rating" class="block p-2 border border-gray-300 rounded-lg">
+          <option value="">Select Rating</option>
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
+      </select>
+  </div>
+
+  <div class="mr-2"> <!-- Remove flex-grow for this element -->
+      <input type="number" name="radius" min="1" class="block p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Enter radius..." />
+  </div>
+
+  <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Search</button>
 </form>
 
-<p class='font-bold text-gray-700 text-green-800 text-[18px]' style='padding-left: 22px;'>Hello {{request.user}}</p>
-<p class='font-bold text-gray-700 text-green-800 text-[13px]' style='padding-left: 22px;'>Restaurants close to {{ current_location }}</p>
+<p class='font-bold text-gray-700 text-green-800 text-4xl' style='padding-left: 22px;'>Hello {{request.user}}</p>
+<p class='font-bold text-gray-700 text-green-800 text-xl' style='padding-left: 22px;'>Restaurants close to you</p>
 
 
 
@@ -62,74 +61,28 @@
   <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
     
     {% for restaurant in response %}
-      <div class='flex items-center bg-white'>
-        <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
-          <div class='max-w-xs mx-auto'>
-            <div class='h-[200px]' style="background-image:url('{{ restaurant.photo_link }}');background-size:cover;background-position:center"></div>
-            <div class='p-4 sm:p-6'>
-              <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> {{restaurant.name}} </p>
-              <div class='flex flex-row'>
-                <p class='text-[17px] font-bold text-[#0FB478]'>{{restaurant.vicinity}}</p>
-              </div>
-              <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant: {{restaurant.rating}}, {{restaurant.price_level}}</p>
-              <a target='_blank' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                  Do Something
-              </a>
-              <a target='_blank' class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
-                  Visit Website
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+    {% include 'FoodFinder/restaurant_card.html' %}
+      
     {% endfor %}
         
   </div>
   
 
   <div class="w-1/2 px-6">
-    <div id="map"></div>
-    {{ response|json_script:"myData" }}
-    <script data-response="{{ response }}">
-      // Initialize and add the map
-      function initMap() {
-          const data = JSON.parse(document.getElementById('myData').textContent);
-          console.log(data);
-          console.log(typeof data);
-          // The location of user
-          const position = { lat: parseFloat("{{ current_location.location.lat }}"), lng: parseFloat("{{ current_location.location.lng }}") };
-  
-          // The map, centered at position
-          const map = new google.maps.Map(document.getElementById("map"), {
-              zoom: 14,
-              center: position,
-          });
-  
-          // const customMarker = document.createElement("div");
-          // customMarker.className = "custom-marker";
-          // customMarker.innerHTML = "A";
-          // const advancedMarker = new google.maps.marker.AdvancedMarkerElement({
-          //     map: map,
-          //     position: { lat: 37.7749, lng: -122.4194 }, // Marker position
-          //     content: customMarker, // Custom HTML marker
-          //     collisionBehavior: google.maps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
-          // });
-  
-          for (let restaurant of data) {
-              const pos = { lat: restaurant.geometry.location.lat, lng: restaurant.geometry.location.lng};
-              // Add the markers
-              new google.maps.Marker({
-                  map: map,
-                  position: pos,
-                  title: restaurant.title,
-              });
-          }
-      }
-      initMap();
-    </script>
+    {% include 'FoodFinder/map_home.html' %}
+    
   </div>
 </div>
 
-<footer class="bg-gray-100 p-6 text-center">
-  <p class="text-gray-700">&copy; 2024 Atlanta Food Finder. All rights reserved.</p>
-</footer>
+<div>
+  <h2 class='font-bold text-gray-700 text-green-800 text-4xl' style='padding-left: 22px;'>{{request.user.profile.favoriteCuisine}} restaurants for you</h2>
+  <div class="grid grid-cols-3 gap-10 w-3/4 pt-5"> <!-- Adjusted gap for spacing -->
+      
+    {% for restaurant in cuisine %}
+    {% include 'FoodFinder/restaurant_card.html' %}
+    {% endfor %}
+        
+  </div>
+</div>
+
+{% include 'FoodFinder/footer.html' %}
