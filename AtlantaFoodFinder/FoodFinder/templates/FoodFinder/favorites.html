@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // input custom colors here
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="">
+{% include 'FoodFinder/navbar.html' %}
+
+<p class='font-bold text-gray-700 text-green-800 text-3xl mt-4' style='padding-left: 22px;'>Favorites</p>
+
+<div class="flex justify-between items-start p-6"> <!-- Flex container for the grid and image -->
+  <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
+    
+    {% for restaurant in response %}
+    {% include 'FoodFinder/restaurant_card.html' %}
+      
+    {% endfor %}
+        
+  </div>
+  
+
+  <div class="w-1/2 px-6">
+    {% include 'FoodFinder/map_home.html' %}
+    
+  </div>
+</div>
+
+{% include 'FoodFinder/footer.html' %}
+</body>
+</html>
