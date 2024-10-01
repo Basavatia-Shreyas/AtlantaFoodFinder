@@ -10,8 +10,12 @@
           <div class='p-4 sm:p-6'>
             <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> {{restaurant.name}} </p>
             <div class='flex flex-row'>
-              <p class='text-[17px] font-bold text-[#0FB478]'>{{restaurant.vicinity}}</p>
-            </div>
+              {% if restaurant.vicinity %}
+                                <p class='text-[17px] font-bold text-[#0FB478]'>{{ restaurant.vicinity }}</p>
+                            {% else %}
+                                <p class='text-[17px] font-bold text-[#0FB478]'>{{ restaurant.formatted_address }}</p>
+                            {% endif %}
+              </div>
             <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant:
               <br>
               <i class="fa-solid fa-star" style="color: #FFD43B;"></i> {{restaurant.rating}}
