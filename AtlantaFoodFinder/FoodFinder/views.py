@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 api_key = os.getenv("API_KEY")
 
@@ -24,22 +25,27 @@ from django.contrib.messages.views import SuccessMessageMixin
 from urllib.parse import urlencode
 
 import googlemaps
+
 map_client = googlemaps.Client(api_key)
 
 from .templates.forms import CreateUserForm
 
+
 # Create your views here.
 @csrf_protect
 def index(request):
-
+    if hasattr(request.user, 'profile'):
+        favoriteCuisine = request.user.profile.favoriteCuisine
+    else:
+        Profile.objects.create(user=request.user)
     current_loc = map_client.geolocate(consider_ip=True)
     if current_loc == None:
         current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
 
-    cuisine_restaurants = {"results" : []}
+    cuisine_restaurants = {"results": []}
     if request.user.is_authenticated:
         favoriteCuisine = request.user.profile.favoriteCuisine
-        #print(favoriteCuisine)
+        # print(favoriteCuisine)
         cuisine_restaurants = map_client.places(favoriteCuisine + " restaurants")
         for index, restaurant in enumerate(cuisine_restaurants['results']):
             try:
@@ -49,7 +55,7 @@ def index(request):
                 cuisine_restaurants['results'][index].pop("photos", None)
             except:
                 pass
-    
+
     rating = request.GET.get("rating")
     radius = request.GET.get("radius")
     search = request.GET.get('search')
@@ -59,17 +65,18 @@ def index(request):
     if radius:
         radius = int(radius) * 1609
 
-
     if radius and search:
         print(type(rating))
         print(type(radius))
         try:
             current_loc = map_client.geolocate(consider_ip=True)
-            response = map_client.places_nearby(keyword=search, location=current_loc['location'], radius=radius, type="restaurant")
+            response = map_client.places_nearby(keyword=search, location=current_loc['location'], radius=radius,
+                                                type="restaurant")
 
             if rating:
                 print("RATING")
-                response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
+                response['results'] = [place for place in response.get('results', []) if
+                                       place.get('rating', 0) >= rating]
 
         except Exception as e:
             current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
@@ -80,13 +87,14 @@ def index(request):
             response = map_client.places_nearby(location=current_loc['location'], radius=radius, type="restaurant")
             print(radius)
             if rating:
-                response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
+                response['results'] = [place for place in response.get('results', []) if
+                                       place.get('rating', 0) >= rating]
 
         except Exception as e:
             current_loc = {'location': {'lat': 33.7707008, 'lng': -84.3874304}, 'accuracy': 1050.952656998642}
             response = {"Error": "Couldn't load nearby restaurants"}
     elif rating:
-         # If there's a search query, use the Places API to search for it
+        # If there's a search query, use the Places API to search for it
         try:
             response = map_client.places(type="restaurant")
             response['results'] = [place for place in response.get('results', []) if place.get('rating', 0) >= rating]
@@ -94,13 +102,13 @@ def index(request):
             print(f"Error fetching search results: {e}")
             response = {"Error": "Couldn't perform search"}
     elif search:
-        #print(search)
+        # print(search)
         response = map_client.places(search + " restaurant", type="restaurant")
         context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key}
     else:
         response = map_client.places_nearby(location=current_loc['location'], radius=500, type="restaurant")
         if response["status"] != "OK":
-            response = {"Error" : "Couldn't load nearby restaurants"}
+            response = {"Error": "Couldn't load nearby restaurants"}
 
     for index, restaurant in enumerate(response['results']):
         try:
@@ -112,35 +120,36 @@ def index(request):
             pass
 
     if response["status"] == "OK":
-        #print('Successful search!')
-        #print(current_loc)
-        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key, 'cuisine': cuisine_restaurants['results']}
+        # print('Successful search!')
+        # print(current_loc)
+        context = {"response": response['results'], "current_location": current_loc, "google_maps_api_key": api_key,
+                   'cuisine': cuisine_restaurants['results']}
     else:
         print(f"Error: {response['status']}")
         context = response
 
     if request.method == "POST":
         if "place" in request.POST.keys():
-            #print("POST REQUEST", request.POST)
+            # print("POST REQUEST", request.POST)
             base_url = reverse('restaurant')
             place_id = request.POST.get("place")
             query_string = urlencode({'place': place_id})
             url = '{}?{}'.format(base_url, query_string)
             return redirect(url)
         elif "search" in request.POST.keys():
-            #print("SEARCH", request.POST)
+            # print("SEARCH", request.POST)
             base_url = reverse('index')
             search_query = request.POST.get("search")
             query_string = urlencode({'search': search_query})
             url = '{}?{}'.format(base_url, query_string)
 
-            return redirect(url) 
+            return redirect(url)
 
     return render(request, "FoodFinder/home.html", context=context)
 
+
 @csrf_protect
 def loginPage(request):
-
     favorite_cuisine = request.GET.get("cuisine")
 
     if request.method == "POST":
@@ -158,9 +167,11 @@ def loginPage(request):
     context = {}
     return render(request, "FoodFinder/login.html", context)
 
+
 def logoutUser(request):
     logout(request)
     return redirect("login")
+
 
 @csrf_protect
 def create_account(request):
@@ -174,13 +185,14 @@ def create_account(request):
             print(request.POST)
 
             favoriteCuisine = request.POST.get("cuisine")
-            #print(favoriteCuisine)
+            # print(favoriteCuisine)
             if form.is_valid():
                 form.save()
-                user = authenticate(request, username=request.POST.get("username"), password=request.POST.get("password1"))
+                user = authenticate(request, username=request.POST.get("username"),
+                                    password=request.POST.get("password1"))
 
                 cuisine = request.POST.get("cuisine")
-                #user.profile.favoriteCuisine = cuisine
+                # user.profile.favoriteCuisine = cuisine
                 profile = Profile(user=user, favoriteCuisine=cuisine, favorites="")
                 profile.save()
 
@@ -192,14 +204,14 @@ def create_account(request):
                 error_str = ''.join([f'{value} ' for key, value in form.error_messages.items()]).strip()
                 messages.info(request, error_str)
 
-        context = {"form" : form}
+        context = {"form": form}
         return render(request, "FoodFinder/create_account.html", context)
+
 
 @csrf_protect
 def restaurant(request):
     place_id = request.GET.get('place')
     response = map_client.place(place_id)
-
 
     current_loc = map_client.geolocate(consider_ip=True)
 
@@ -207,7 +219,8 @@ def restaurant(request):
     try:
         for photo in response["result"]["photos"]:
             photo_reference = photo["photo_reference"]
-            links.append(f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}")
+            links.append(
+                f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={api_key}")
     except:
         pass
 
@@ -215,12 +228,12 @@ def restaurant(request):
     response["favorites"] = request.user.profile.favorites
 
     if response["status"] == "OK":
-        #print('Successful search!')
+        # print('Successful search!')
         context = {"response": response, "current_location": current_loc, "google_maps_api_key": api_key}
     else:
         print(f"Error: {response['status']}")
         context = response
-    
+
     if request.method == "POST":
         if "favorite" in request.POST.keys():
             print("favorite request")
@@ -234,7 +247,7 @@ def restaurant(request):
                 curr_profile = Profile.objects.get(user=request.user)
                 curr_profile.favorites = curr_profile.favorites.replace(" " + place_id, "")
                 curr_profile.save()
-            
+
             base_url = reverse('restaurant')
             place_id = request.POST.get("place")
             query_string = urlencode({'place': place_id})
@@ -243,12 +256,13 @@ def restaurant(request):
 
     return render(request, "FoodFinder/restaurant.html", context=context)
 
+
 @login_required(login_url="login")
 def favorites(request):
     favorite_str = Profile.objects.get(user=request.user).favorites
-    #print(favorite_str)
+    # print(favorite_str)
     favorites = favorite_str.split(" ")
-    response = {"favorites":[]}
+    response = {"favorites": []}
     print(favorites)
     for place_id in favorites[1:]:
         print("PLACEID", place_id)
@@ -265,15 +279,15 @@ def favorites(request):
 
     if request.method == "POST":
         if "place" in request.POST.keys():
-            #print("POST REQUEST", request.POST)
+            # print("POST REQUEST", request.POST)
             base_url = reverse('restaurant')
             place_id = request.POST.get("place")
             query_string = urlencode({'place': place_id})
             url = '{}?{}'.format(base_url, query_string)
             return redirect(url)
 
-    context={"response": response["favorites"], "google_maps_api_key": api_key, "current_location": current_loc}
-    
+    context = {"response": response["favorites"], "google_maps_api_key": api_key, "current_location": current_loc}
+
     return render(request, "FoodFinder/favorites.html", context=context)
 
 
@@ -286,4 +300,3 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       " If you don't receive an email, " \
                       "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('login')
-

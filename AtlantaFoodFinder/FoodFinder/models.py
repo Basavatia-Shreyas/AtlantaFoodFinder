@@ -20,7 +20,7 @@ class Profile(models.Model):
     favoriteCuisine = models.CharField(
         choices=Cuisine.choices,
         default=Cuisine.American,
-        max_length=15,
+        max_length=20,
     )
 
     favorites = models.CharField(max_length=280, null=True)
