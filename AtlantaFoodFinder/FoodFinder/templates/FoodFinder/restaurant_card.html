@@ -22,10 +22,18 @@
               <i class="fa-solid fa-star" style="color: #FFD43B;"></i> {{restaurant.rating}}
               <br>
               <i class="fa-solid fa-money-bill" style="color: #77bb41;"></i>
+              {% if restaurant.price_level %}
               {{restaurant.price_level}}
+              {% else %}
+              No Price Level
+              {% endif %}
               <br>
               <i class="fa-solid fa-door-open"></i>
-              {{restaurant.opening_hours.open_now}}
+              {% if restaurant.opening_hours.open_now %}
+              Open
+              {% else %}
+              Closed
+              {% endif %}
             </p>
             <form method="POST" action="#">
               {% csrf_token %}
