@@ -1,7 +1,7 @@
 # AtlantaFoodFinder
 
 ## Published portfolio website
-https://sites.google.com/view/atlantafoodfinderrrr/code
+https://sites.google.com/view/atlantafoodfinderrrr
 
 
 ## Our Notion Kanban Board
