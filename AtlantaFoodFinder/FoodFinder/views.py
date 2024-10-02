@@ -188,8 +188,13 @@ def create_account(request):
                 url = '{}?{}'.format(base_url, query_string)
                 return redirect(url)
             else:
-                error_str = ''.join([f'{value} ' for key, value in form.error_messages.items()]).strip()
-                messages.info(request, error_str)
+                if len(request.POST.get("password1")) < 8:
+                    messages.info(request, "Password must be at least 8 characters")
+                elif request.POST.get("password1").isdigit():
+                    messages.info(request, "Password cannot be only numerical")
+                else:
+                    error_str = ''.join([f'{value} ' for key, value in form.error_messages.items()]).strip()
+                    messages.info(request, error_str)
 
         context = {"form" : form}
         return render(request, "FoodFinder/create_account.html", context)
