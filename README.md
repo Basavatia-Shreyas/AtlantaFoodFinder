@@ -12,3 +12,5 @@ dummy user:
 user_name: shrey
 email: test@email.com
 password: password
+
+link to team website: https://sites.google.com/view/atlantafoodfinderrrr/home
