@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // Add custom colors if needed
+          }
+        }
+      }
+    }
+
+    let currentSlide = 0;
+
+    function showSlides() {
+      const slides = document.querySelectorAll('.slideshow-image');
+      slides.forEach((slide, index) => {
+        slide.style.opacity = index === currentSlide ? '1' : '0';
+      });
+
+      currentSlide = (currentSlide + 1) % slides.length;
+      setTimeout(showSlides, 1500); // Change image every 3 seconds
+    }
+
+    window.onload = function() {
+      showSlides();
+    };
+  </script>
+  <style>
+    .slideshow-image {
+      background-size: cover;
+      background-position: center;
+      transition: opacity 1s ease-in-out;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0; /* Start with slides hidden */
+    }
+    .slideshow-container {
+      position: relative;
+      width: 100%;
+      height: 500px;
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/97589db57b.js" crossorigin="anonymous"></script>
+</head>
+
+
+
+
+<body>
+{% include 'FoodFinder/navbar.html' %}
+
+<!-- Background behind card and map -->
+<div class="flex min-h-screen bg-white px-6">
+  <!-- Left Side: Card Section -->
+  <div class="w-1/2 flex items-center mr-7 pl-4 pb-10">
+    <div class="w-full max-w-l bg-white shadow-xl h-full overflow-hidden">
+        <div class="max-w-l h-full flex flex-col justify-between">
+            <div class="slideshow-container">
+              {% for photo in response.photo_links %}
+              <div class="slideshow-image" style="background-image:url('{{ photo }}'); opacity: 1;"></div>
+              {% endfor %}
+            </div>
+
+            <div class="p-4 sm:p-3 flex-grow">
+                <p class="font-bold text-gray-700 text-[22px] leading-7 mb-1">{{ response.result.name }}</p>
+
+                <hr class="w-full border-t-2 border-gray-300 my-2">
+
+                   <!-- Clickable Heart Icon -->
+                <form method="POST" action="#" class="mb-2">
+                  {% csrf_token %}
+                  <input type="hidden" name="place" value="{{ response.result.place_id }}">
+                  <button type="submit" id="heartButton" name="favorite" class="flex items-center p-2 mt-4 bg-white rounded-lg shadow hover:bg-gray-200 transition duration-300">
+                    {% if response.result.place_id in response.favorites %}
+                    <i class="fa-solid fa-heart"></i>
+                    {% else %}
+                    <i class="fa-regular fa-heart"></i>
+                    {% endif %}
+                  </button>
+                </form>
+                <!-- Column for Cuisine, Price, and Distance -->
+                <div class="flex flex-col space-y-2">
+                  {% if response.result.price_level %}
+                    <p class="text-[17px] font-bold text-green-700">
+                      <i class="fa-solid fa-money-bill" style="color: #77bb41;"></i>
+                      {{response.result.price_level}}
+                    </p>
+                  {% endif %}
+                  <p class="text-[17px] font-bold text-black-700">
+                    <i class="fa-solid fa-phone" style="color: #2f6e1c;"></i>
+                    {{response.result.formatted_phone_number}}
+                  </p>
+                  <p class="text-[17px] font-bold text-black-700">
+                    {% if response.result.delivery %}
+                      <i class="fa-solid fa-truck" style="color: #2f6e1c;"></i>
+                      Delivery
+                      <br>
+                    {% endif %}
+                    {% if response.result.dine_in %}
+                      <i class="fa-solid fa-utensils" style="color: #2f6e1c;"></i>
+                      Dine In
+                      <br>
+                    {% endif %}
+                    {% if response.result.takeout %}
+                    <i class="fa-solid fa-person-walking" style="color: #2f6e1c;"></i>
+                    Takeout
+                    <br>
+                    {% endif %}
+                    {% if response.result.wheelchair_accessible_entrance %}
+                    <i class="fa-solid fa-wheelchair" style="color: #2f6e1c;"></i>
+                    Wheelchair Accessible
+                    <br>
+                    {% endif %}
+                    
+                  </p>
+                  <p class="text-[17px] font-bold text-green-700">
+                    <i class="fa-solid fa-star" style="color: #FFD43B;"></i> 
+                    {{response.result.rating}}
+                  </p>
+                  <p class="text-[#7C7C80] font-[15px]">
+                    <i class="fa-solid fa-location-dot"></i>
+                    {{ response.result.formatted_address }}
+                  </p>
+                  <p class="text-black font-[15px]">
+                    {{response.result.editorial_summary.overview}}
+                  </p>
+                  
+                </div>
+             <a target="_blank" href="{{ response.result.website }}" class="block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#007000] text-white rounded-[14px] hover:bg-[#009000] focus:outline-none focus:ring focus:ring-green-300 focus:ring-opacity-80">Website</a>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Right Side: Image and Reviews Section -->
+  <div class="w-1/2 flex flex-col items-center justify-start h-full pr-4 pb-10 ">
+    <div class="w-1/2 px-6"></div>
+        {% include 'FoodFinder/map_restaurant.html' %}
+        <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-md mt-5">
+          <h2 class="text-2xl font-bold mb-4 text-center text-gray-800"><i class="fa-regular fa-clock mr-2"></i>Opening Hours</h2>
+          <ul class="space-y-2">
+            {% for timing in response.result.opening_hours.weekday_text %}
+            <li class="flex justify-between">
+              <span class="font-semibold text-gray-700  ">{{ timing }}</span>
+              <span class="text-gray-500"></span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+    </div>
+    
+   
+
+    
+  </div>
+  <!-- Reviews Section -->
+  <div class="w-full px-10 flex flex-col gap-2 p-5">
+    <h1 class="py-5 text-3xl">Reviews</h1>
+    <!-- Item Container -->
+    <div class="flex flex-col gap-3">
+        {% for review in response.result.reviews %}
+          <div class="flex flex-col gap-4 p-4">
+            <!-- Profile and Rating -->
+            <div class="flex justify justify-between">
+                <div class="flex gap-2">
+                    <div class="w-7 h-7 text-center rounded-full"><i class="fa-solid fa-user"></i></div>
+                    <span>{{ review.author_name }}</span>
+                    <span>
+                      <i class="fa-solid fa-star" style="color: #FFD43B;"></i>
+                      {{ review.rating }}
+                    </span>
+                </div>
+            </div>
+            <p> {{ review.text }}</p>
+          </div>
+        {% endfor %}
+        
+    </div>
+</div>
+</div>
+
+
+<footer class="bg-gray-100 p-6 text-center">
+  <p class="text-gray-700">&copy; 2024 Atlanta Food Finder. All rights reserved.</p>
+</footer>
+<!-- Include Ionicons -->
+<script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons.js"></script>
+
+<script>
+  // Handle heart icon toggle
+  const heartButton = document.getElementById('heartButton');
+  const heartIcon = document.getElementById('heartIcon');
+
+  heartButton.addEventListener('click', () => {
+      if (heartIcon.name === 'heart-outline') {
+          heartIcon.name = 'heart';
+          alert('Added to favorites!');
+      } else {
+          heartIcon.name = 'heart-outline';
+          alert('Removed from favorites!');
+      }
+  });
+</script>
+
+
+</body>
+</html>

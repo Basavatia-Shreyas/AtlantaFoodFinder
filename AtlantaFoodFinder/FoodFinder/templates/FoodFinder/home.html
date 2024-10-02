@@ -1,0 +1,88 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // input custom colors here
+          }
+        }
+      }
+    }
+  </script>
+    <style>
+        #map {
+            height: 80vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="">
+{% csrf_token %}
+{% include 'FoodFinder/navbar.html' %}
+
+<form method="GET" action="{% url 'index' %}" class="flex items-center justify-start px-6 py-3 max-w-full">
+  <div class="relative flex-grow mr-2 w-700 h-full"> <!-- Set the width to 700px -->
+      <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+      {% csrf_token %}
+      <input type="text" name="search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search Restaurant, Location..." />
+  </div>
+
+  <div class="mr-2"> <!-- Remove flex-grow for this element -->
+      <select name="rating" class="block p-2 border border-gray-300 rounded-lg">
+          <option value="">Select Rating</option>
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
+      </select>
+  </div>
+
+  <div class="mr-2"> <!-- Remove flex-grow for this element -->
+      <input type="number" name="radius" min="1" class="block p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Enter radius..." />
+  </div>
+
+  <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Search</button>
+</form>
+
+<p class='font-bold text-gray-700 text-green-800 text-4xl' style='padding-left: 22px;'>Hello {{request.user}}</p>
+<p class='font-bold text-gray-700 text-green-800 text-xl' style='padding-left: 22px;'>Restaurants close to you</p>
+
+
+
+<div class="flex justify-between items-start p-6"> <!-- Flex container for the grid and image -->
+  <div class="grid grid-cols-3 gap-10 w-3/4"> <!-- Adjusted gap for spacing -->
+    
+    {% for restaurant in response %}
+    {% include 'FoodFinder/restaurant_card.html' %}
+      
+    {% endfor %}
+        
+  </div>
+  
+
+  <div class="w-1/2 px-6">
+    {% include 'FoodFinder/map_home.html' %}
+    
+  </div>
+</div>
+
+<div>
+  <h2 class='font-bold text-gray-700 text-green-800 text-4xl' style='padding-left: 22px;'>{{request.user.profile.favoriteCuisine}} restaurants for you</h2>
+  <div class="grid grid-cols-3 gap-10 w-3/4 pt-5"> <!-- Adjusted gap for spacing -->
+      
+    {% for restaurant in cuisine %}
+    {% include 'FoodFinder/restaurant_card.html' %}
+    {% endfor %}
+        
+  </div>
+</div>
+
+{% include 'FoodFinder/footer.html' %}

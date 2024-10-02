@@ -1,0 +1,37 @@
+
+<head>
+  <script src="https://kit.fontawesome.com/97589db57b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class='flex items-center bg-white'>
+      <div class='w-full max-w-xs mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
+        <div class='max-w-xs mx-auto'>
+          <div class='h-[200px]' style="background-image:url('{{ restaurant.photo_link }}');background-size:cover;background-position:center"></div>
+          <div class='p-4 sm:p-6'>
+            <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'> {{restaurant.name}} </p>
+            <div class='flex flex-row'>
+              <p class='text-[17px] font-bold text-[#0FB478]'>{{restaurant.vicinity}}</p>
+            </div>
+            <p class='text-[#7C7C80] font-[15px] mt-6'>Description of restaurant:
+              <br>
+              <i class="fa-solid fa-star" style="color: #FFD43B;"></i> {{restaurant.rating}}
+              <br>
+              <i class="fa-solid fa-money-bill" style="color: #77bb41;"></i>
+              {{restaurant.price_level}}
+              <br>
+              <i class="fa-solid fa-door-open"></i>
+              {{restaurant.opening_hours.open_now}}
+            </p>
+            <form method="POST" action="#">
+              {% csrf_token %}
+              <input type="hidden" name="place" value="{{ restaurant.place_id }}">
+              <button type="submit" class="block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80">More Info</button>
+            </form>
+            <a href="https://www.google.com/maps/dir/?api=1&origin={{ current_location.location.lat }},{{ current_location.location.lng }}&destination={{ restaurant.geometry.location.lat }}{{ restaurant.geometry.location.lng }}&destination_place_id={{ restaurant.place_id }}" class='block mt-1.5 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform rounded-[14px] hover:bg-[#F2ECE7] hover:text-[#000000dd] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
+              Directions
+            </a>
+          </div>
+        </div>
+      </div>
+  </div>
+</body>
